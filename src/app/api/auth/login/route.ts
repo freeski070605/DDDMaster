@@ -1,7 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { ADMIN_SESSION_COOKIE, createAdminSession, verifyPassword } from "@/lib/auth";
+import {
+  ADMIN_SESSION_COOKIE,
+  createAdminSession,
+  getAdminSessionCookieOptions,
+  verifyPassword,
+} from "@/lib/auth";
 import { env, isDatabaseConfigured } from "@/lib/env";
 import { connectToDatabase } from "@/lib/mongoose";
 import { loginSchema } from "@/lib/validators";
@@ -23,13 +28,7 @@ export async function POST(request: Request) {
         });
 
         const cookieStore = await cookies();
-        cookieStore.set(ADMIN_SESSION_COOKIE, token, {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: process.env.NODE_ENV === "production",
-          path: "/",
-          maxAge: 60 * 60 * 24 * 7,
-        });
+        cookieStore.set(ADMIN_SESSION_COOKIE, token, getAdminSessionCookieOptions());
 
         return NextResponse.json({ success: true });
       }
@@ -43,13 +42,7 @@ export async function POST(request: Request) {
       });
 
       const cookieStore = await cookies();
-      cookieStore.set(ADMIN_SESSION_COOKIE, token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-        maxAge: 60 * 60 * 24 * 7,
-      });
+      cookieStore.set(ADMIN_SESSION_COOKIE, token, getAdminSessionCookieOptions());
 
       return NextResponse.json({ success: true });
     }

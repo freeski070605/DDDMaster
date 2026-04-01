@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/site/header";
 import { StickyCta } from "@/components/site/sticky-cta";
 import { brandName } from "@/data/seed-content";
 import { getSiteSettings } from "@/lib/cms";
-import { env } from "@/lib/env";
+import { env, getAbsoluteUrl } from "@/lib/env";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -22,6 +22,9 @@ const body = Manrope({
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.siteUrl),
+  alternates: {
+    canonical: getAbsoluteUrl("/"),
+  },
   title: {
     default: `${brandName} | Luxury Event Decor in Philadelphia`,
     template: `%s | ${brandName}`,
@@ -32,7 +35,14 @@ export const metadata: Metadata = {
     title: `${brandName} | Luxury Event Decor`,
     description:
       "Upscale event styling, polished booking, and premium design for celebrations that deserve more than ordinary decor.",
-    images: ["/images/events/IMG_0822-2.jpg"],
+    url: getAbsoluteUrl("/"),
+    siteName: brandName,
+    type: "website",
+    images: [getAbsoluteUrl("/images/events/IMG_0822-2.jpg")],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [getAbsoluteUrl("/images/events/IMG_0822-2.jpg")],
   },
 };
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { brandName } from "@/data/seed-content";
-import { env } from "@/lib/env";
+import { getAbsoluteUrl } from "@/lib/env";
 
 export function createPageMetadata({
   title,
@@ -16,14 +16,18 @@ export function createPageMetadata({
     title,
     description,
     alternates: {
-      canonical: path,
+      canonical: getAbsoluteUrl(path),
     },
     openGraph: {
       title: `${title} | ${brandName}`,
       description,
-      url: `${env.siteUrl}${path}`,
+      url: getAbsoluteUrl(path),
       siteName: brandName,
-      images: ["/images/events/IMG_0822-2.jpg"],
+      images: [getAbsoluteUrl("/images/events/IMG_0822-2.jpg")],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [getAbsoluteUrl("/images/events/IMG_0822-2.jpg")],
     },
   };
 }

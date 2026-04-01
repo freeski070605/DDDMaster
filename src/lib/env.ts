@@ -1,8 +1,30 @@
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000";
+const LOCAL_SITE_URL = "http://localhost:3000";
+const PRODUCTION_SITE_URL = "https://www.divinedecor.design";
+
+function normalizeSiteUrl(siteUrl?: string) {
+  const isProduction = process.env.NODE_ENV === "production";
+  const fallbackSiteUrl = isProduction ? PRODUCTION_SITE_URL : LOCAL_SITE_URL;
+  const rawValue = siteUrl?.trim() || fallbackSiteUrl;
+  const normalizedValue = /^[a-z]+:\/\//i.test(rawValue) ? rawValue : `https://${rawValue}`;
+  const url = new URL(normalizedValue);
+  const isLocalhost = ["localhost", "127.0.0.1"].includes(url.hostname);
+
+  if (isProduction && isLocalhost) {
+    return PRODUCTION_SITE_URL;
+  }
+
+  if (!isLocalhost && url.protocol !== "https:") {
+    url.protocol = "https:";
+  }
+
+  return url.toString().replace(/\/$/, "");
+}
+
+const siteUrl = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL);
 
 export const env = {
   siteUrl,
+  siteHost: new URL(siteUrl).host,
   mongodbUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   adminEmail: process.env.ADMIN_EMAIL ?? "owner@divinedesigndecor.com",
@@ -19,6 +41,10 @@ export const env = {
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ??
     "https://www.instagram.com/divinedesigndecor",
 };
+
+export function getAbsoluteUrl(path = "/") {
+  return new URL(path, env.siteUrl).toString();
+}
 
 export function isDatabaseConfigured() {
   return Boolean(env.mongodbUri);

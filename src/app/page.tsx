@@ -19,6 +19,7 @@ import {
   getSiteSettings,
   getTestimonials,
 } from "@/lib/cms";
+import { getAbsoluteUrl } from "@/lib/env";
 
 export default async function HomePage() {
   const [settings, services, testimonials, faqs, galleryItems, packages] =
@@ -47,8 +48,8 @@ export default async function HomePage() {
             areaServed: settings.serviceAreas,
             telephone: settings.phone,
             email: settings.email,
-            url: "/",
-            image: "/images/events/IMG_0822-2.jpg",
+            url: getAbsoluteUrl("/"),
+            image: getAbsoluteUrl("/images/events/IMG_0822-2.jpg"),
             description: settings.heroSubtitle,
           },
           {

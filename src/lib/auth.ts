@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
 
 export const ADMIN_SESSION_COOKIE = "ddd_admin_session";
+const adminSessionDuration = 60 * 60 * 24 * 7;
 
 function getJwtSecret() {
   if (!env.jwtSecret) {
@@ -29,6 +30,16 @@ export async function createAdminSession(payload: { id: string; email: string; r
     .setIssuedAt()
     .setExpirationTime("7d")
     .sign(getJwtSecret());
+}
+
+export function getAdminSessionCookieOptions() {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: adminSessionDuration,
+  };
 }
 
 export async function readAdminSession() {
