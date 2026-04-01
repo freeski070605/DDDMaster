@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fbf7fc;
+  --foreground: #2f2437;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-foreground: #2f2437;
+  --popover: #ffffff;
+  --popover-foreground: #2f2437;
+  --primary: #755796;
+  --primary-strong: #62467f;
+  --primary-foreground: #fffafc;
+  --secondary: #ede1f7;
+  --secondary-foreground: #4c385f;
+  --muted: #efe7f3;
+  --muted-foreground: #6f6078;
+  --accent: #d3b88c;
+  --accent-foreground: #4e3b22;
+  --border: rgba(121, 96, 140, 0.18);
+  --ring: rgba(117, 87, 150, 0.24);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+}
+
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(226, 213, 241, 0.9), transparent 32%),
+    radial-gradient(circle at right, rgba(218, 194, 221, 0.35), transparent 26%),
+    linear-gradient(180deg, #fcf8fd 0%, #f8f1fa 42%, #f6eff8 100%);
+  color: var(--foreground);
+  font-family: var(--font-body), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(117, 87, 150, 0.2);
+}
+
+.page-shell {
+  position: relative;
+}
+
+.page-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.12) 0,
+    rgba(255, 255, 255, 0) 120px
+  );
+}
+
+.section {
+  padding-block: 4.5rem;
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-block: 6.5rem;
+  }
+}
