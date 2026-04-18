@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { Loader2, Pencil, Plus, Search, Sparkles, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -27,6 +28,51 @@ type CollectionManagerProps = {
   emptyItem: Record<string, unknown>;
 };
 
+function getItemTitle(item: Record<string, unknown>) {
+  return String(item.title ?? item.name ?? item.question ?? "Untitled");
+}
+
+function getItemSubtitle(item: Record<string, unknown>) {
+  return String(item.slug ?? item.role ?? item.category ?? item.venue ?? "");
+}
+
+function getItemImage(item: Record<string, unknown>) {
+  const image = item.image;
+  return typeof image === "string" && image ? image : null;
+}
+
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function isWideField(type: FieldConfig["type"]) {
+  return type === "textarea" || type === "tags" || type === "image";
+}
+
+function getSingularLabel(title: string) {
+  if (title === "Gallery") {
+    return "gallery item";
+  }
+
+  if (title === "FAQs") {
+    return "FAQ";
+  }
+
+  if (title.endsWith("ies")) {
+    return `${title.slice(0, -3)}y`.toLowerCase();
+  }
+
+  if (title.endsWith("s")) {
+    return title.slice(0, -1).toLowerCase();
+  }
+
+  return title.toLowerCase();
+}
+
 export function CollectionManager({
   title,
   description,
@@ -36,10 +82,24 @@ export function CollectionManager({
   emptyItem,
 }: CollectionManagerProps) {
   const router = useRouter();
+  const singularLabel = getSingularLabel(title);
   const [formState, setFormState] = useState<Record<string, unknown>>(emptyItem);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredItems = items.filter((item) => {
+    const haystack = [
+      getItemTitle(item),
+      getItemSubtitle(item),
+      String(item.description ?? item.quote ?? item.answer ?? ""),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return haystack.includes(searchTerm.trim().toLowerCase());
+  });
 
   function startEdit(item: Record<string, unknown>) {
     const nextState = { ...item };
@@ -52,6 +112,7 @@ export function CollectionManager({
 
     setFormState(nextState);
     setEditingId(String(item._id));
+    setMessage("");
   }
 
   function reset() {
@@ -73,6 +134,20 @@ export function CollectionManager({
     });
 
     return payload;
+  }
+
+  function fillSlugFromTitle() {
+    const source = String(formState.title ?? formState.name ?? "");
+
+    if (!source.trim()) {
+      setMessage("Add a title or name first, then use Fill slug.");
+      return;
+    }
+
+    setFormState((current) => ({
+      ...current,
+      slug: slugify(source),
+    }));
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -122,166 +197,293 @@ export function CollectionManager({
       return;
     }
 
+    if (editingId === id) {
+      reset();
+    }
+
+    setMessage("Item deleted.");
     router.refresh();
   }
 
   return (
-    <Card>
+    <Card className="bg-white/88">
       <CardContent className="space-y-6">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--muted-foreground)]">
+              Manage collection
+            </p>
+            <h2 className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
               {title}
             </h2>
-            <p className="text-sm leading-7 text-[color:var(--muted-foreground)]">
+            <p className="mt-2 max-w-3xl text-sm leading-7 text-[color:var(--muted-foreground)]">
               {description}
             </p>
           </div>
-          {editingId ? (
+          <div className="flex flex-wrap gap-3">
+            <div className="rounded-full bg-[color:var(--secondary)] px-4 py-2 text-sm text-[color:var(--secondary-foreground)]">
+              {items.length} total items
+            </div>
             <Button type="button" variant="secondary" onClick={reset}>
-              Cancel edit
+              <Plus className="size-4" />
+              Add new {singularLabel}
             </Button>
-          ) : null}
+          </div>
         </div>
 
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          {fields.map((field) => (
-            <div key={field.name} className="space-y-2">
-              <Label>{field.label}</Label>
-              {field.type === "textarea" ? (
-                <Textarea
-                  value={String(formState[field.name] ?? "")}
-                  onChange={(event) =>
-                    setFormState((current) => ({
-                      ...current,
-                      [field.name]: event.target.value,
-                    }))
-                  }
-                />
-              ) : null}
-              {field.type === "text" || field.type === "number" ? (
+        <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+          <div className="space-y-4">
+            <div className="rounded-[1.75rem] border border-[color:var(--border)] bg-[color:var(--secondary)]/35 p-4">
+              <Label className="text-sm font-semibold text-[color:var(--foreground)]">
+                Search items
+              </Label>
+              <div className="relative mt-2">
+                <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-[color:var(--muted-foreground)]" />
                 <Input
-                  type={field.type === "number" ? "number" : "text"}
-                  value={String(formState[field.name] ?? "")}
-                  onChange={(event) =>
-                    setFormState((current) => ({
-                      ...current,
-                      [field.name]:
-                        field.type === "number"
-                          ? Number(event.target.value)
-                          : event.target.value,
-                    }))
-                  }
+                  className="pl-10"
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder={`Search ${title.toLowerCase()}`}
                 />
-              ) : null}
-              {field.type === "tags" ? (
-                <Textarea
-                  value={String(formState[field.name] ?? "")}
-                  onChange={(event) =>
-                    setFormState((current) => ({
-                      ...current,
-                      [field.name]: event.target.value,
-                    }))
-                  }
-                  placeholder="One item per line"
-                />
-              ) : null}
-              {field.type === "checkbox" ? (
-                <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--border)] bg-white/70 px-4 py-3 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(formState[field.name])}
-                    onChange={(event) =>
-                      setFormState((current) => ({
-                        ...current,
-                        [field.name]: event.target.checked,
-                      }))
-                    }
-                  />
-                  Mark as featured
-                </label>
-              ) : null}
-              {field.type === "select" ? (
-                <select
-                  className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
-                  value={String(formState[field.name] ?? "")}
-                  onChange={(event) =>
-                    setFormState((current) => ({
-                      ...current,
-                      [field.name]: event.target.value,
-                    }))
-                  }
-                >
-                  {field.options?.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              ) : null}
-              {field.type === "image" ? (
-                <ImageUploadField
-                  label={field.label}
-                  multiple={false}
-                  value={formState[field.name] ? [String(formState[field.name])] : []}
-                  onChange={(urls) =>
-                    setFormState((current) => ({
-                      ...current,
-                      [field.name]: urls[0] ?? "",
-                    }))
-                  }
-                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {filteredItems.length ? (
+                filteredItems.map((item) => {
+                  const itemId = String(item._id ?? item.slug ?? item.name);
+                  const image = getItemImage(item);
+                  const active = editingId === String(item._id);
+
+                  return (
+                    <div
+                      key={itemId}
+                      className={`rounded-[1.75rem] border p-4 transition ${
+                        active
+                          ? "border-[color:var(--primary)] bg-[color:var(--secondary)]/35"
+                          : "border-[color:var(--border)] bg-white/75"
+                      }`}
+                    >
+                      <div className="flex gap-4">
+                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[1.25rem] bg-[color:var(--secondary)]/45">
+                          {image ? (
+                            <Image
+                              src={image}
+                              alt={getItemTitle(item)}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-xs text-[color:var(--muted-foreground)]">
+                              No image
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="font-semibold text-[color:var(--foreground)]">
+                              {getItemTitle(item)}
+                            </p>
+                            {item.featured ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--primary)]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--primary)]">
+                                <Sparkles className="size-3" />
+                                Featured
+                              </span>
+                            ) : null}
+                          </div>
+                          {getItemSubtitle(item) ? (
+                            <p className="mt-1 text-sm text-[color:var(--muted-foreground)]">
+                              {getItemSubtitle(item)}
+                            </p>
+                          ) : null}
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <Button type="button" variant="secondary" onClick={() => startEdit(item)}>
+                              <Pencil className="size-4" />
+                              Edit
+                            </Button>
+                            {item._id ? (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => void handleDelete(String(item._id))}
+                              >
+                                <Trash2 className="size-4" />
+                                Delete
+                              </Button>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="rounded-[1.75rem] border border-dashed border-[color:var(--border)] bg-white/65 p-8 text-sm leading-7 text-[color:var(--muted-foreground)]">
+                  No items matched your search.
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-[color:var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.95),rgba(248,241,250,0.92))] p-5 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                  {editingId ? "Editing item" : "Create new item"}
+                </p>
+                <h3 className="mt-2 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                  {editingId ? getItemTitle(formState) : `New ${singularLabel}`}
+                </h3>
+              </div>
+              {editingId ? (
+                <Button type="button" variant="secondary" onClick={reset}>
+                  Cancel edit
+                </Button>
               ) : null}
             </div>
-          ))}
-          {message ? <p className="text-sm text-[color:var(--muted-foreground)]">{message}</p> : null}
-          <Button type="submit" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="size-4 animate-spin" />
-                Saving
-              </>
-            ) : (
-              <>
-                <Plus className="size-4" />
-                {editingId ? "Update item" : "Add item"}
-              </>
-            )}
-          </Button>
-        </form>
 
-        <div className="space-y-3">
-          {items.map((item) => (
-            <div
-              key={String(item._id ?? item.slug ?? item.name)}
-              className="flex flex-col gap-3 rounded-[1.5rem] border border-[color:var(--border)] bg-white/75 p-4 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div>
-                <p className="font-semibold text-[color:var(--foreground)]">
-                  {String(item.title ?? item.name ?? item.question ?? "Untitled")}
-                </p>
-                <p className="text-sm text-[color:var(--muted-foreground)]">
-                  {String(item.slug ?? item.role ?? item.category ?? "")}
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button type="button" variant="secondary" onClick={() => startEdit(item)}>
-                  <Pencil className="size-4" />
-                  Edit
-                </Button>
-                {item._id ? (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => void handleDelete(String(item._id))}
+            <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+              <div className="grid gap-5 lg:grid-cols-2">
+                {fields.map((field) => (
+                  <div
+                    key={field.name}
+                    className={`space-y-2 ${isWideField(field.type) ? "lg:col-span-2" : ""}`}
                   >
-                    <Trash2 className="size-4" />
-                    Delete
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-sm font-semibold text-[color:var(--foreground)]">
+                        {field.label}
+                      </Label>
+                      {field.name === "slug" ? (
+                        <Button type="button" variant="ghost" size="sm" onClick={fillSlugFromTitle}>
+                          Fill slug
+                        </Button>
+                      ) : null}
+                    </div>
+
+                    {field.type === "textarea" ? (
+                      <Textarea
+                        value={String(formState[field.name] ?? "")}
+                        onChange={(event) =>
+                          setFormState((current) => ({
+                            ...current,
+                            [field.name]: event.target.value,
+                          }))
+                        }
+                      />
+                    ) : null}
+
+                    {field.type === "text" || field.type === "number" ? (
+                      <Input
+                        type={field.type === "number" ? "number" : "text"}
+                        value={String(formState[field.name] ?? "")}
+                        onChange={(event) =>
+                          setFormState((current) => ({
+                            ...current,
+                            [field.name]:
+                              field.type === "number"
+                                ? Number(event.target.value)
+                                : event.target.value,
+                          }))
+                        }
+                      />
+                    ) : null}
+
+                    {field.type === "tags" ? (
+                      <>
+                        <Textarea
+                          value={String(formState[field.name] ?? "")}
+                          onChange={(event) =>
+                            setFormState((current) => ({
+                              ...current,
+                              [field.name]: event.target.value,
+                            }))
+                          }
+                          placeholder="One item per line"
+                        />
+                        <p className="text-sm leading-6 text-[color:var(--muted-foreground)]">
+                          Add one list item per line.
+                        </p>
+                      </>
+                    ) : null}
+
+                    {field.type === "checkbox" ? (
+                      <label className="flex min-h-14 items-center gap-3 rounded-[1.5rem] border border-[color:var(--border)] bg-white/75 px-4 py-3 text-sm text-[color:var(--foreground)]">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(formState[field.name])}
+                          onChange={(event) =>
+                            setFormState((current) => ({
+                              ...current,
+                              [field.name]: event.target.checked,
+                            }))
+                          }
+                        />
+                        Show this item as featured
+                      </label>
+                    ) : null}
+
+                    {field.type === "select" ? (
+                      <select
+                        className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm text-[color:var(--foreground)]"
+                        value={String(formState[field.name] ?? "")}
+                        onChange={(event) =>
+                          setFormState((current) => ({
+                            ...current,
+                            [field.name]: event.target.value,
+                          }))
+                        }
+                      >
+                        {field.options?.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : null}
+
+                    {field.type === "image" ? (
+                      <ImageUploadField
+                        label={field.label}
+                        multiple={false}
+                        value={formState[field.name] ? [String(formState[field.name])] : []}
+                        onChange={(urls) =>
+                          setFormState((current) => ({
+                            ...current,
+                            [field.name]: urls[0] ?? "",
+                          }))
+                        }
+                      />
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+
+              {message ? (
+                <p className="text-sm font-medium text-[color:var(--muted-foreground)]">{message}</p>
+              ) : null}
+
+              <div className="flex flex-wrap gap-3">
+                <Button type="submit" size="lg" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Saving
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="size-4" />
+                      {editingId ? "Update item" : "Create item"}
+                    </>
+                  )}
+                </Button>
+                {editingId ? (
+                  <Button type="button" variant="outline" size="lg" onClick={reset}>
+                    Clear form
                   </Button>
                 ) : null}
               </div>
-            </div>
-          ))}
+            </form>
+          </div>
         </div>
       </CardContent>
     </Card>

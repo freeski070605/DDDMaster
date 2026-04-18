@@ -11,6 +11,7 @@ import { TestimonialCard } from "@/components/site/testimonial-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { brandName } from "@/data/seed-content";
+import { getAbsoluteUrl } from "@/lib/env";
 import {
   getFaqs,
   getGalleryItems,
@@ -19,10 +20,10 @@ import {
   getSiteSettings,
   getTestimonials,
 } from "@/lib/cms";
-import { getAbsoluteUrl } from "@/lib/env";
+import type { SiteSettings } from "@/types/content";
 
 export default async function HomePage() {
-  const [settings, services, testimonials, faqs, galleryItems, packages] =
+  const [rawSettings, services, testimonials, faqs, galleryItems, packages] =
     await Promise.all([
       getSiteSettings(),
       getServices(),
@@ -32,10 +33,11 @@ export default async function HomePage() {
       getPackages(),
     ]);
 
+  const settings = rawSettings as SiteSettings;
   const featuredServices = services.filter((service) => service.featured).slice(0, 4);
   const featuredTestimonials = testimonials.filter((item) => item.featured).slice(0, 3);
   const featuredFaqs = faqs.filter((item) => item.featured).slice(0, 4);
-  const featuredGallery = galleryItems.slice(0, 3);
+  const featuredGallery = galleryItems.slice(0, 4);
 
   return (
     <>
@@ -49,7 +51,7 @@ export default async function HomePage() {
             telephone: settings.phone,
             email: settings.email,
             url: getAbsoluteUrl("/"),
-            image: getAbsoluteUrl("/images/events/IMG_0822-2.jpg"),
+            image: getAbsoluteUrl(settings.heroImage),
             description: settings.heroSubtitle,
           },
           {
@@ -66,34 +68,35 @@ export default async function HomePage() {
           },
         ]}
       />
-      <section className="section overflow-hidden">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+
+      <section className="section overflow-hidden pb-10">
+        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.02fr_0.98fr] lg:px-8">
           <div className="flex flex-col justify-center">
-            <div className="inline-flex w-fit rounded-full bg-white/70 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[color:var(--muted-foreground)] ring-1 ring-white/60">
-              Philadelphia luxury event decor studio
+            <div className="inline-flex w-fit rounded-full bg-white/85 px-5 py-2 text-sm font-medium text-[color:var(--foreground)] ring-1 ring-[color:var(--border)]">
+              {settings.heroBadge}
             </div>
-            <h1 className="mt-6 max-w-3xl font-[family-name:var(--font-display)] text-5xl leading-[0.95] text-[color:var(--foreground)] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-6 max-w-3xl font-[family-name:var(--font-display)] text-5xl leading-[0.96] text-[color:var(--foreground)] sm:text-6xl lg:text-7xl">
               {settings.heroTitle}
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[color:var(--muted-foreground)] sm:text-lg">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[color:var(--muted-foreground)]">
               {settings.heroSubtitle}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/gallery">{settings.heroSecondaryCta}</Link>
-              </Button>
-              <Button asChild variant="secondary" size="lg">
                 <Link href="/inquire">{settings.heroPrimaryCta}</Link>
               </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link href="/gallery">{settings.heroSecondaryCta}</Link>
+              </Button>
             </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {settings.statistics.map((item) => (
-                <Card key={item.label}>
+                <Card key={item.label} className="bg-white/90">
                   <CardContent className="p-5">
                     <p className="text-3xl font-semibold text-[color:var(--foreground)]">
                       {item.value}
                     </p>
-                    <p className="mt-2 text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                    <p className="mt-2 text-sm leading-6 text-[color:var(--muted-foreground)]">
                       {item.label}
                     </p>
                   </CardContent>
@@ -101,20 +104,36 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <div className="relative min-h-[34rem] overflow-hidden rounded-[2.5rem] border border-white/60 shadow-[0_35px_120px_rgba(73,54,97,0.2)]">
+
+          <div className="relative min-h-[38rem] overflow-hidden rounded-[2.5rem] border border-white/60 shadow-[0_35px_120px_rgba(73,54,97,0.2)]">
             <Image
-              src="/images/events/IMG_0822-2.jpg"
-              alt="Luxury wedding decor designed by Divine Design and Decor"
+              src={settings.heroImage}
+              alt={settings.heroImageAlt}
               fill
               priority
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(37,24,48,0.08),rgba(37,24,48,0.48))]" />
-            <div className="absolute inset-x-6 bottom-6 grid gap-4 sm:grid-cols-2">
-              {featuredGallery.map((item) => (
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(42,31,54,0.06),rgba(42,31,54,0.58))]" />
+            <div className="absolute inset-x-5 top-5 rounded-[1.75rem] bg-white/88 p-5 shadow-lg backdrop-blur">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--muted-foreground)]">
+                What clients book most
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {settings.featuredCategoryLabels.slice(0, 4).map((label) => (
+                  <span
+                    key={label}
+                    className="rounded-full bg-[color:var(--secondary)] px-4 py-2 text-sm text-[color:var(--secondary-foreground)]"
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="absolute inset-x-5 bottom-5 grid gap-4 sm:grid-cols-2">
+              {featuredGallery.slice(0, 2).map((item) => (
                 <div
                   key={item.slug}
-                  className="rounded-[1.75rem] bg-white/18 p-4 text-white backdrop-blur"
+                  className="rounded-[1.75rem] bg-[rgba(34,24,43,0.48)] p-4 text-white backdrop-blur"
                 >
                   <p className="text-xs uppercase tracking-[0.2em] text-white/70">
                     {item.category}
@@ -130,24 +149,63 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHeading
-            eyebrow="Signature events"
-            title="Styled for milestones, built for the feeling your guests remember."
-            description="Our work spans intimate social gatherings, polished weddings, and custom event concepts that deserve more than a generic decor package."
-          />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {settings.featuredCategoryLabels.map((label, index) => (
-              <Card key={label} className={index === 0 ? "xl:col-span-2" : ""}>
-                <CardContent className="flex min-h-40 flex-col justify-between">
-                  <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
-                    Category {index + 1}
+      <section className="section pt-0">
+        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
+          <Card className="bg-white/88">
+            <CardContent className="space-y-6">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--muted-foreground)]">
+                  Why clients choose us
+                </p>
+                <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)] sm:text-5xl">
+                  {settings.galleryHeadline}
+                </h2>
+                <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
+                  {settings.galleryCopy}
+                </p>
+              </div>
+              <div className="grid gap-4">
+                <div className="rounded-[1.75rem] bg-[color:var(--secondary)]/65 p-5">
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                    Our story
                   </p>
-                  <h3 className="font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                    {label}
-                  </h3>
-                </CardContent>
+                  <p className="mt-3 text-base leading-8 text-[color:var(--foreground)]">
+                    {settings.story}
+                  </p>
+                </div>
+                <div className="rounded-[1.75rem] bg-[#f4eee7] p-5">
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                    Our mission
+                  </p>
+                  <p className="mt-3 text-base leading-8 text-[color:var(--foreground)]">
+                    {settings.mission}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {featuredGallery.map((item, index) => (
+              <Card
+                key={item.slug}
+                className={index === 0 ? "sm:col-span-2" : ""}
+              >
+                <div className="relative min-h-64 overflow-hidden">
+                  <Image src={item.image} alt={item.title} fill className="object-cover" />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(35,24,44,0.62))]" />
+                  <div className="absolute inset-x-5 bottom-5 text-white">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/75">
+                      {item.category}
+                    </p>
+                    <h3 className="mt-2 font-[family-name:var(--font-display)] text-3xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-lg text-sm leading-6 text-white/80">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
               </Card>
             ))}
           </div>
@@ -155,40 +213,53 @@ export default async function HomePage() {
       </section>
 
       <section className="section">
-        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
-          <Card className="overflow-hidden">
-            <div className="relative min-h-[24rem]">
-              <Image
-                src="/images/events/IMG_0509-2.jpg"
-                alt="Before event transformation setup"
-                fill
-                className="object-cover"
-              />
-            </div>
+        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Card className="overflow-hidden">
+              <div className="relative min-h-[24rem]">
+                <Image
+                  src={settings.showcasePrimaryImage}
+                  alt={settings.showcasePrimaryImageAlt}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </Card>
+            <Card className="overflow-hidden sm:translate-y-10">
+              <div className="relative min-h-[24rem]">
+                <Image
+                  src={settings.showcaseSecondaryImage}
+                  alt={settings.showcaseSecondaryImageAlt}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </Card>
+          </div>
+          <Card className="bg-white/88">
+            <CardContent className="flex h-full flex-col justify-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--muted-foreground)]">
+                {settings.showcaseEyebrow}
+              </p>
+              <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)] sm:text-5xl">
+                {settings.showcaseTitle}
+              </h2>
+              <p className="mt-5 text-base leading-8 text-[color:var(--muted-foreground)]">
+                {settings.showcaseCopy}
+              </p>
+              <div className="mt-8 rounded-[1.75rem] bg-[color:var(--secondary)]/60 p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                  Social proof
+                </p>
+                <h3 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                  {settings.socialProofHeadline}
+                </h3>
+                <p className="mt-3 text-base leading-8 text-[color:var(--muted-foreground)]">
+                  {settings.socialProofCopy}
+                </p>
+              </div>
+            </CardContent>
           </Card>
-          <Card className="overflow-hidden">
-            <div className="relative min-h-[24rem]">
-              <Image
-                src="/images/events/IMG_0808-2.jpg"
-                alt="After event transformation reveal"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </Card>
-        </div>
-        <div className="mx-auto mt-8 w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <p className="text-sm uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
-            Transformation-led styling
-          </p>
-          <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)] sm:text-5xl">
-            We design the reveal, not just the decor list.
-          </h2>
-          <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
-            Each event is shaped around the emotional impact of the room. That means
-            focal points, layered textures, and guest flow are all considered with the
-            finished atmosphere in mind.
-          </p>
         </div>
       </section>
 
@@ -196,8 +267,8 @@ export default async function HomePage() {
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="Services"
-            title="Signature styling services with room for custom direction."
-            description="Whether you need a single statement installation or full event styling support, our services are designed to meet the moment beautifully."
+            title={settings.servicesHeadline}
+            description={settings.servicesCopy}
           />
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
             {featuredServices.map((service) => (
@@ -210,58 +281,88 @@ export default async function HomePage() {
       <section className="section">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            eyebrow="Testimonials"
-            title="Clients trust us when the details matter."
-            description="The work has to feel beautiful, but the process should feel steady too. That balance is why our clients refer us again and again."
+            eyebrow="Instagram"
+            title="A closer look at recent decor moments and celebration details."
+            description="Use this feed as inspiration for backdrops, table styling, welcome moments, and the overall feeling you want guests to walk into."
           />
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {featuredTestimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.name} {...testimonial} />
-            ))}
+          <div className="mt-10">
+            <InstagramStrip handle={settings.instagramHandle} />
           </div>
         </div>
       </section>
 
       <section className="section">
-        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
-          {settings.bookingSteps.map((step, index) => (
-            <Card key={step.title}>
-              <CardContent>
-                <p className="text-sm uppercase tracking-[0.22em] text-[color:var(--muted-foreground)]">
-                  Step {index + 1}
-                </p>
-                <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                  {step.title}
-                </h3>
-                <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                  {step.description}
-                </p>
-              </CardContent>
-            </Card>
+        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+          <div>
+            <SectionHeading
+              eyebrow="Testimonials"
+              title={settings.testimonialsHeadline}
+              description={settings.testimonialsCopy}
+            />
+          </div>
+          <Card className="bg-[linear-gradient(135deg,rgba(117,87,150,0.14),rgba(211,184,140,0.18))]">
+            <CardContent>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                What the experience feels like
+              </p>
+              <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                Clear communication, calm planning, and event-day confidence.
+              </h3>
+              <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
+                We pair polished design with a process that is easy to follow, especially for
+                busy families and hosts planning a meaningful event.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="mx-auto mt-10 grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
+          {featuredTestimonials.map((testimonial) => (
+            <TestimonialCard key={testimonial.name} {...testimonial} />
           ))}
         </div>
       </section>
 
       <section className="section">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <InstagramStrip handle={settings.instagramHandle} />
+          <SectionHeading
+            eyebrow="Our process"
+            title={settings.processHeadline}
+            description={settings.processCopy}
+          />
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {settings.bookingSteps.map((step, index) => (
+              <Card key={step.title} className="bg-white/88">
+                <CardContent>
+                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[color:var(--muted-foreground)]">
+                    Step {index + 1}
+                  </p>
+                  <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
+                    {step.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="section">
-        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[0.92fr_1.08fr] lg:px-8">
           <div>
             <SectionHeading
               eyebrow="Service areas"
-              title="Local, polished, and built for hosts across the region."
-              description="We regularly style events in Philadelphia, Delaware County, South Jersey, Chester, Upper Darby, Camden, and nearby areas."
+              title={settings.serviceAreasHeadline}
+              description={settings.serviceAreasCopy}
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {settings.serviceAreas.map((area) => (
-              <Card key={area}>
+              <Card key={area} className="bg-white/88">
                 <CardContent>
-                  <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
                     Now serving
                   </p>
                   <h3 className="mt-3 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
@@ -278,8 +379,8 @@ export default async function HomePage() {
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading
             eyebrow="FAQ"
-            title="Answers that make the next step feel easy."
-            description="We keep the process straightforward, transparent, and tailored to the kind of event you are planning."
+            title={settings.faqHeadline}
+            description={settings.faqCopy}
           />
           <div className="mt-10">
             <FaqAccordion items={featuredFaqs} />
@@ -289,11 +390,17 @@ export default async function HomePage() {
 
       <section className="section pt-0">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-8 rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_24px_80px_rgba(95,73,123,0.12)]">
-            <p className="text-sm uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+          <div className="mb-8 rounded-[2rem] border border-white/60 bg-white/80 p-6 shadow-[0_24px_80px_rgba(95,73,123,0.12)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
               Investment snapshot
             </p>
-            <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)] sm:text-5xl">
+              {settings.investmentHeadline}
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--muted-foreground)]">
+              {settings.investmentCopy}
+            </p>
+            <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {packages.slice(0, 3).map((item) => (
                 <div key={item.slug} className="rounded-[1.5rem] bg-[color:var(--secondary)]/55 p-5">
                   <p className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--foreground)]">

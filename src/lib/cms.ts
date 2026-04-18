@@ -60,7 +60,11 @@ export async function getSiteSettings() {
 
   await connectToDatabase();
   const settings = await SiteSettingsModel.findOne().lean();
-  return serialize(settings ?? fallbackSiteSettings);
+  const serializedSettings = serialize(settings ?? {});
+  return {
+    ...fallbackSiteSettings,
+    ...serializedSettings,
+  };
 }
 
 export async function getServices() {

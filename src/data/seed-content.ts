@@ -87,11 +87,14 @@ export const fallbackSiteSettings = {
   phone: "(267) 555-0144",
   email: "hello@divinedesigndecor.com",
   instagramHandle: "@divinedesigndecor",
+  heroBadge: "Warm, guided event decor for weddings, showers, and milestone celebrations",
   heroTitle: "Luxury Event Decor That Turns Moments Into Experiences",
   heroSubtitle:
     "Divine Design and Decor creates elevated celebrations across Philadelphia, Delaware County, South Jersey, and surrounding areas with refined styling, warm hospitality, and flawless visual storytelling.",
   heroPrimaryCta: "Book a Consultation",
   heroSecondaryCta: "View Our Work",
+  heroImage: "/images/events/IMG_0822-2.jpg",
+  heroImageAlt: "Elegant wedding reception decorated by Divine Design and Decor",
   story:
     "We design celebration spaces that feel emotionally rich, visually polished, and entirely personal to the people gathering inside them.",
   mission:
@@ -106,6 +109,23 @@ export const fallbackSiteSettings = {
     "Graduations",
     "Corporate Experiences",
   ],
+  galleryHeadline: "Beautiful rooms are memorable. Easy planning makes them enjoyable.",
+  galleryCopy:
+    "We help clients move from scattered ideas to a clear, polished event plan with visuals that feel welcoming, elevated, and celebration-ready.",
+  showcaseEyebrow: "Transformation-led styling",
+  showcaseTitle: "We design spaces that feel inviting before guests even take their seats.",
+  showcaseCopy:
+    "From focal installations to layered table details, each setup is designed to feel organized, elegant, and easy for guests to enjoy the moment.",
+  showcasePrimaryImage: "/images/events/IMG_0509-2.jpg",
+  showcasePrimaryImageAlt: "Styled event setup with detailed decor and statement focal point",
+  showcaseSecondaryImage: "/images/events/IMG_0808-2.jpg",
+  showcaseSecondaryImageAlt: "Completed event reveal with polished tablescape and celebration decor",
+  servicesHeadline: "Choose the level of design support that fits your celebration.",
+  servicesCopy:
+    "Whether you need one standout focal moment or full event styling, we build the decor plan around your venue, your guest experience, and your goals.",
+  testimonialsHeadline: "Clients trust the work because the process feels steady from day one.",
+  testimonialsCopy:
+    "Design matters, but so does communication. Our clients come back because they feel supported, listened to, and confident along the way.",
   bookingSteps: [
     {
       title: "Inquire",
@@ -123,9 +143,21 @@ export const fallbackSiteSettings = {
         "Our team handles styling, setup, and finishing touches so your event feels seamless and unforgettable.",
     },
   ],
+  processHeadline: "A simple process that keeps planning clear and manageable.",
+  processCopy:
+    "Each step is designed to be straightforward, with clear next actions and practical guidance so you never feel lost in the process.",
   socialProofHeadline: "Seen on timelines, remembered in person.",
   socialProofCopy:
     "Our installations are designed to stop the scroll and leave a lasting impression once your guests step into the room.",
+  serviceAreasHeadline: "Serving families, couples, and hosts across the greater Philadelphia region.",
+  serviceAreasCopy:
+    "We regularly design events in Philadelphia, Delaware County, South Jersey, Chester, Upper Darby, Camden, and nearby communities.",
+  faqHeadline: "Questions answered in plain language, without the guesswork.",
+  faqCopy:
+    "We keep the process transparent so you know what to expect around booking, travel, timing, and event-day support.",
+  investmentHeadline: "Start with a package, then tailor the details around your event.",
+  investmentCopy:
+    "Our packages give you a clear starting point, and we can customize from there based on venue size, guest count, focal pieces, and overall styling goals.",
   ctaBannerTitle: "Ready for decor that feels as special as the moment itself?",
   ctaBannerCopy:
     "Tell us about your celebration and we will help shape a design experience that feels elevated from the very first conversation.",
