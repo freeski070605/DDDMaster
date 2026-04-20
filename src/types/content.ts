@@ -80,5 +80,7 @@ export type SiteSettings = {
   investmentCopy: string;
   ctaBannerTitle: string;
   ctaBannerCopy: string;
+  ctaBannerImage: string;
+  ctaBannerImageAlt: string;
   consultationDurationMinutes: number;
 };

@@ -79,7 +79,7 @@ export async function getServices() {
 
   await connectToDatabase();
   const services = await ServiceModel.find().sort({ startingPrice: 1 }).lean();
-  return serialize(services.length ? services : fallbackServices);
+  return serialize(services);
 }
 
 export async function getServiceBySlug(slug: string) {
@@ -91,9 +91,7 @@ export async function getServiceBySlug(slug: string) {
 
   await connectToDatabase();
   const service = await ServiceModel.findOne({ slug }).lean();
-  return serialize(
-    service ?? fallbackServices.find((fallback) => fallback.slug === slug) ?? null,
-  );
+  return serialize(service ?? null);
 }
 
 export async function getPackages() {

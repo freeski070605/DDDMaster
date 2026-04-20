@@ -68,6 +68,8 @@ type SettingsFormState = {
   investmentCopy: string;
   ctaBannerTitle: string;
   ctaBannerCopy: string;
+  ctaBannerImage: string;
+  ctaBannerImageAlt: string;
   consultationDurationMinutes: string;
 };
 
@@ -457,6 +459,8 @@ function createInitialState(settings: SiteSettings): SettingsFormState {
     investmentCopy: settings.investmentCopy,
     ctaBannerTitle: settings.ctaBannerTitle,
     ctaBannerCopy: settings.ctaBannerCopy,
+    ctaBannerImage: settings.ctaBannerImage,
+    ctaBannerImageAlt: settings.ctaBannerImageAlt,
     consultationDurationMinutes: String(settings.consultationDurationMinutes),
   };
 }
@@ -977,6 +981,12 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             description="This section closes the homepage with package guidance and your final booking prompt."
             appearsOn={["Homepage package intro", "Homepage final banner"]}
           >
+            <div className="rounded-[1.5rem] bg-[color:var(--secondary)]/35 p-4 text-sm leading-7 text-[color:var(--foreground)]">
+              Package photos in the homepage package section are changed in the
+              <strong> Packages </strong>
+              section below.
+              The final call-to-action banner image is changed here.
+            </div>
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
                 label="Investment headline"
@@ -999,6 +1009,15 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 onChange={(value) => updateField("ctaBannerCopy", value)}
               />
             </div>
+            <ImageField
+              label="Final call-to-action image"
+              helper="This image appears inside the final banner at the bottom of the homepage."
+              value={formState.ctaBannerImage}
+              altLabel="Final call-to-action image description"
+              altValue={formState.ctaBannerImageAlt}
+              onChange={(value) => updateField("ctaBannerImage", value)}
+              onAltChange={(value) => updateField("ctaBannerImageAlt", value)}
+            />
           </SectionCard>
 
           <div className="sticky bottom-4 flex justify-end">

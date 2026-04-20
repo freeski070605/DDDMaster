@@ -4,14 +4,11 @@ import { CtaBanner } from "@/components/site/cta-banner";
 import { GalleryGrid } from "@/components/site/gallery-grid";
 import { SectionHeading } from "@/components/site/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
-import { fallbackServices } from "@/data/seed-content";
 import { getGalleryItems, getServiceBySlug } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
 
-export async function generateStaticParams() {
-  return fallbackServices.map((service) => ({ slug: service.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

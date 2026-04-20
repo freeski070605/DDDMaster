@@ -143,6 +143,8 @@ export const settingsSchema = z.object({
   investmentCopy: z.string().min(20),
   ctaBannerTitle: z.string().min(10),
   ctaBannerCopy: z.string().min(20),
+  ctaBannerImage: z.string().url(),
+  ctaBannerImageAlt: z.string().min(8),
   consultationDurationMinutes: z.coerce.number().int().min(15).max(120),
 });
 

@@ -171,6 +171,8 @@ export const fallbackSiteSettings = {
   ctaBannerTitle: "Ready for decor that feels as special as the moment itself?",
   ctaBannerCopy:
     "Tell us about your celebration and we will help shape a design experience that feels elevated from the very first conversation.",
+  ctaBannerImage: "/images/events/IMG_0822-2.jpg",
+  ctaBannerImageAlt: "Elegant event decor setup ready for guests",
   consultationDurationMinutes: 30,
 };
 

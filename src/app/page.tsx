@@ -288,11 +288,27 @@ export default async function HomePage() {
             title={settings.servicesHeadline}
             description={settings.servicesCopy}
           />
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            {featuredServices.map((service) => (
-              <ServiceCard key={service.slug} {...service} />
-            ))}
-          </div>
+          {featuredServices.length ? (
+            <div className="mt-10 grid gap-6 lg:grid-cols-2">
+              {featuredServices.map((service) => (
+                <ServiceCard key={service.slug} {...service} />
+              ))}
+            </div>
+          ) : (
+            <Card className="mt-10 bg-white/88">
+              <CardContent>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                  Services coming soon
+                </p>
+                <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                  Updated service details will appear here soon.
+                </h3>
+                <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
+                  We are preparing refreshed service images and descriptions for this section.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </section>
 
@@ -439,7 +455,12 @@ export default async function HomePage() {
               ))}
             </div>
           </div>
-          <CtaBanner title={settings.ctaBannerTitle} copy={settings.ctaBannerCopy} />
+          <CtaBanner
+            title={settings.ctaBannerTitle}
+            copy={settings.ctaBannerCopy}
+            image={settings.ctaBannerImage}
+            imageAlt={settings.ctaBannerImageAlt}
+          />
         </div>
       </section>
     </>

@@ -67,6 +67,8 @@ const siteSettingsSchema = new Schema(
     investmentCopy: { type: String, required: true },
     ctaBannerTitle: { type: String, required: true },
     ctaBannerCopy: { type: String, required: true },
+    ctaBannerImage: { type: String, required: true },
+    ctaBannerImageAlt: { type: String, required: true },
     consultationDurationMinutes: { type: Number, required: true },
   },
   { timestamps: true },

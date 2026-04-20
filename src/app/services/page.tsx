@@ -25,11 +25,25 @@ export default async function ServicesPage() {
           description="Each service is designed to feel editorial, personal, and clear in scope so clients can understand the investment and the experience from the start."
           align="center"
         />
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          {services.map((service) => (
-            <ServiceCard key={service.slug} {...service} />
-          ))}
-        </div>
+        {services.length ? (
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {services.map((service) => (
+              <ServiceCard key={service.slug} {...service} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-12 rounded-[2rem] border border-white/60 bg-white/80 p-8 text-center shadow-[0_24px_80px_rgba(95,73,123,0.12)]">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+              Services coming soon
+            </p>
+            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)]">
+              New service offerings will appear here soon.
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[color:var(--muted-foreground)]">
+              We are preparing updated service details and images for this section.
+            </p>
+          </div>
+        )}
         <div className="mt-12 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_80px_rgba(95,73,123,0.12)]">
           <h2 className="font-[family-name:var(--font-display)] text-4xl text-[color:var(--foreground)]">
             Need something more tailored?

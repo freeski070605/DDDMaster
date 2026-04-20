@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 
-import { fallbackServices, serviceAreas } from "@/data/seed-content";
+import { serviceAreas } from "@/data/seed-content";
 import { getAbsoluteUrl } from "@/lib/env";
+import { getServices } from "@/lib/cms";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     "",
     "/about",
@@ -20,7 +21,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 
-  const serviceRoutes = fallbackServices.map((service) => ({
+  const services = await getServices();
+
+  const serviceRoutes = services.map((service) => ({
     url: getAbsoluteUrl(`/services/${service.slug}`),
     lastModified: new Date(),
   }));
