@@ -43,6 +43,14 @@ function getItemImage(item: Record<string, unknown>) {
   return typeof image === "string" && image ? image : null;
 }
 
+function getGalleryMedia(item: Record<string, unknown>) {
+  return [
+    { label: "Main", url: typeof item.image === "string" ? item.image : "" },
+    { label: "Before", url: typeof item.beforeImage === "string" ? item.beforeImage : "" },
+    { label: "After", url: typeof item.afterImage === "string" ? item.afterImage : "" },
+  ].filter((entry) => entry.url);
+}
+
 function slugify(value: string) {
   return value
     .toLowerCase()
@@ -125,6 +133,7 @@ export function CollectionManager({
 
     return haystack.includes(searchTerm.trim().toLowerCase());
   });
+  const isGalleryCollection = collection === "gallery";
 
   function startEdit(item: Record<string, unknown>) {
     const nextState = { ...item };
@@ -317,12 +326,13 @@ export function CollectionManager({
               </div>
             </div>
 
-            <div className="space-y-3">
+            <div className={isGalleryCollection ? "grid gap-4 md:grid-cols-2" : "space-y-3"}>
               {filteredItems.length ? (
                 filteredItems.map((item) => {
                   const itemId = String(item._id ?? item.slug ?? item.name);
                   const image = getItemImage(item);
                   const active = editingId === String(item._id);
+                  const galleryMedia = getGalleryMedia(item);
 
                   return (
                     <div
@@ -331,66 +341,158 @@ export function CollectionManager({
                         active
                           ? "border-[color:var(--primary)] bg-[color:var(--secondary)]/35"
                           : "border-[color:var(--border)] bg-white/75"
-                      }`}
+                      } ${isGalleryCollection ? "h-full" : ""}`}
                     >
-                      <div className="flex gap-4">
-                        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[1.25rem] bg-[color:var(--secondary)]/45">
-                          {image ? (
-                            <Image
-                              src={image}
-                              alt={getItemTitle(item)}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-xs text-[color:var(--muted-foreground)]">
-                              No image
+                      {isGalleryCollection ? (
+                        <div className="flex h-full flex-col gap-4">
+                          <div className="grid gap-3 sm:grid-cols-[1.3fr_0.7fr]">
+                            <div className="relative min-h-52 overflow-hidden rounded-[1.25rem] bg-[color:var(--secondary)]/45">
+                              {image ? (
+                                <Image
+                                  src={image}
+                                  alt={getItemTitle(item)}
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="flex h-full items-center justify-center text-xs text-[color:var(--muted-foreground)]">
+                                  No main image
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <p className="font-semibold text-[color:var(--foreground)]">
-                              {getItemTitle(item)}
-                            </p>
-                            {item.featured ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--primary)]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--primary)]">
-                                <Sparkles className="size-3" />
-                                Featured
-                              </span>
-                            ) : null}
+                            <div className="grid gap-3">
+                              {galleryMedia.slice(1, 3).length ? (
+                                galleryMedia.slice(1, 3).map((media) => (
+                                  <div
+                                    key={`${itemId}-${media.label}`}
+                                    className="relative min-h-24 overflow-hidden rounded-[1.25rem] bg-[color:var(--secondary)]/45"
+                                  >
+                                    <Image
+                                      src={media.url}
+                                      alt={`${getItemTitle(item)} ${media.label.toLowerCase()} view`}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                    <div className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
+                                      {media.label}
+                                    </div>
+                                  </div>
+                                ))
+                              ) : (
+                                <div className="flex min-h-24 items-center justify-center rounded-[1.25rem] bg-[color:var(--secondary)]/35 p-3 text-center text-xs text-[color:var(--muted-foreground)]">
+                                  Add before and after images for fuller gallery control.
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          {getItemSubtitle(item) ? (
-                            <p className="mt-1 text-sm text-[color:var(--muted-foreground)]">
-                              {getItemSubtitle(item)}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-semibold text-[color:var(--foreground)]">
+                                {getItemTitle(item)}
+                              </p>
+                              {item.featured ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--primary)]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--primary)]">
+                                  <Sparkles className="size-3" />
+                                  Featured
+                                </span>
+                              ) : null}
+                            </div>
+                            {getItemSubtitle(item) ? (
+                              <p className="mt-1 text-sm text-[color:var(--muted-foreground)]">
+                                {getItemSubtitle(item)}
+                              </p>
+                            ) : null}
+                            <p className="mt-2 text-sm text-[color:var(--muted-foreground)]">
+                              {galleryMedia.length} image{galleryMedia.length === 1 ? "" : "s"} attached
                             </p>
-                          ) : null}
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            <Button type="button" variant="secondary" onClick={() => startEdit(item)}>
-                              <Pencil className="size-4" />
-                              Edit
-                            </Button>
-                            {item._id ? (
-                              <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() =>
-                                  void handleDelete(String(item._id), getItemTitle(item))
-                                }
-                              >
-                                <Trash2 className="size-4" />
-                                Delete
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              <Button type="button" variant="secondary" onClick={() => startEdit(item)}>
+                                <Pencil className="size-4" />
+                                Edit
                               </Button>
-                            ) : null}
+                              {item._id ? (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() =>
+                                    void handleDelete(String(item._id), getItemTitle(item))
+                                  }
+                                >
+                                  <Trash2 className="size-4" />
+                                  Delete
+                                </Button>
+                              ) : null}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="flex gap-4">
+                          <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[1.25rem] bg-[color:var(--secondary)]/45">
+                            {image ? (
+                              <Image
+                                src={image}
+                                alt={getItemTitle(item)}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-full items-center justify-center text-xs text-[color:var(--muted-foreground)]">
+                                No image
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <p className="font-semibold text-[color:var(--foreground)]">
+                                {getItemTitle(item)}
+                              </p>
+                              {item.featured ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--primary)]/12 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--primary)]">
+                                  <Sparkles className="size-3" />
+                                  Featured
+                                </span>
+                              ) : null}
+                            </div>
+                            {getItemSubtitle(item) ? (
+                              <p className="mt-1 text-sm text-[color:var(--muted-foreground)]">
+                                {getItemSubtitle(item)}
+                              </p>
+                            ) : null}
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              <Button type="button" variant="secondary" onClick={() => startEdit(item)}>
+                                <Pencil className="size-4" />
+                                Edit
+                              </Button>
+                              {item._id ? (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() =>
+                                    void handleDelete(String(item._id), getItemTitle(item))
+                                  }
+                                >
+                                  <Trash2 className="size-4" />
+                                  Delete
+                                </Button>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })
               ) : (
-                <div className="rounded-[1.75rem] border border-dashed border-[color:var(--border)] bg-white/65 p-8 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                  No items matched your search.
+                <div
+                  className={`rounded-[1.75rem] border border-dashed border-[color:var(--border)] bg-white/65 p-8 text-sm leading-7 text-[color:var(--muted-foreground)] ${
+                    isGalleryCollection ? "md:col-span-2" : ""
+                  }`}
+                >
+                  {searchTerm.trim()
+                    ? "No items matched your search."
+                    : isGalleryCollection
+                      ? "No gallery items have been added yet. Create your first gallery item here and it will appear on the live site."
+                      : "No items matched your search."}
                 </div>
               )}
             </div>

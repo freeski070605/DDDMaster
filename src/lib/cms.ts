@@ -148,7 +148,7 @@ export async function getGalleryItems() {
 
   await connectToDatabase();
   const galleryItems = await GalleryItemModel.find().sort({ createdAt: -1 }).lean();
-  return serialize(galleryItems.length ? galleryItems : fallbackGalleryItems);
+  return serialize(galleryItems);
 }
 
 export async function getGalleryItemBySlug(slug: string) {
@@ -160,9 +160,7 @@ export async function getGalleryItemBySlug(slug: string) {
 
   await connectToDatabase();
   const item = await GalleryItemModel.findOne({ slug }).lean();
-  return serialize(
-    item ?? fallbackGalleryItems.find((fallback) => fallback.slug === slug) ?? null,
-  );
+  return serialize(item ?? null);
 }
 
 export async function getAvailableConsultationSlots() {

@@ -129,22 +129,24 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="absolute inset-x-5 bottom-5 grid gap-4 sm:grid-cols-2">
-              {featuredGallery.slice(0, 2).map((item) => (
-                <div
-                  key={item.slug}
-                  className="rounded-[1.75rem] bg-[rgba(34,24,43,0.48)] p-4 text-white backdrop-blur"
-                >
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/70">
-                    {item.category}
-                  </p>
-                  <p className="mt-2 font-[family-name:var(--font-display)] text-2xl">
-                    {item.title}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-white/80">{item.venue}</p>
-                </div>
-              ))}
-            </div>
+            {featuredGallery.length ? (
+              <div className="absolute inset-x-5 bottom-5 grid gap-4 sm:grid-cols-2">
+                {featuredGallery.slice(0, 2).map((item) => (
+                  <div
+                    key={item.slug}
+                    className="rounded-[1.75rem] bg-[rgba(34,24,43,0.48)] p-4 text-white backdrop-blur"
+                  >
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/70">
+                      {item.category}
+                    </p>
+                    <p className="mt-2 font-[family-name:var(--font-display)] text-2xl">
+                      {item.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-white/80">{item.venue}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
       </section>
@@ -186,28 +188,45 @@ export default async function HomePage() {
           </Card>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {featuredGallery.map((item, index) => (
-              <Card
-                key={item.slug}
-                className={index === 0 ? "sm:col-span-2" : ""}
-              >
-                <div className="relative min-h-64 overflow-hidden">
-                  <Image src={item.image} alt={item.title} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(35,24,44,0.62))]" />
-                  <div className="absolute inset-x-5 bottom-5 text-white">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/75">
-                      {item.category}
-                    </p>
-                    <h3 className="mt-2 font-[family-name:var(--font-display)] text-3xl">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 max-w-lg text-sm leading-6 text-white/80">
-                      {item.description}
-                    </p>
+            {featuredGallery.length ? (
+              featuredGallery.map((item, index) => (
+                <Card
+                  key={item.slug}
+                  className={index === 0 ? "sm:col-span-2" : ""}
+                >
+                  <div className="relative min-h-64 overflow-hidden">
+                    <Image src={item.image} alt={item.title} fill className="object-cover" />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(35,24,44,0.62))]" />
+                    <div className="absolute inset-x-5 bottom-5 text-white">
+                      <p className="text-xs uppercase tracking-[0.2em] text-white/75">
+                        {item.category}
+                      </p>
+                      <h3 className="mt-2 font-[family-name:var(--font-display)] text-3xl">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 max-w-lg text-sm leading-6 text-white/80">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                </Card>
+              ))
+            ) : (
+              <Card className="sm:col-span-2">
+                <CardContent>
+                  <p className="text-sm uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                    Gallery coming soon
+                  </p>
+                  <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                    New gallery images will appear here after they are added in admin.
+                  </h3>
+                  <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
+                    The homepage and the admin dashboard now stay aligned, so only real
+                    gallery content appears on the live site.
+                  </p>
+                </CardContent>
               </Card>
-            ))}
+            )}
           </div>
         </div>
       </section>
