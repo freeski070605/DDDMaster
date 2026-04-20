@@ -982,9 +982,12 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             appearsOn={["Homepage package intro", "Homepage final banner"]}
           >
             <div className="rounded-[1.5rem] bg-[color:var(--secondary)]/35 p-4 text-sm leading-7 text-[color:var(--foreground)]">
-              Package photos in the homepage package section are changed in the
+              The text for the investment snapshot is changed here. The package photos and
+              package cards shown in that section are changed in the
               <strong> Packages </strong>
-              section below.
+              section below. Mark a package as
+              <strong> Featured </strong>
+              if you want it to appear in the homepage investment snapshot.
               The final call-to-action banner image is changed here.
             </div>
             <div className="grid gap-5 lg:grid-cols-2">

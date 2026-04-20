@@ -38,6 +38,8 @@ export default async function HomePage() {
   const featuredTestimonials = testimonials.filter((item) => item.featured).slice(0, 3);
   const featuredFaqs = faqs.filter((item) => item.featured).slice(0, 4);
   const featuredGallery = galleryItems.slice(0, 4);
+  const featuredPackages = packages.filter((item) => item.featured).slice(0, 3);
+  const investmentPackages = featuredPackages.length ? featuredPackages : packages.slice(0, 3);
 
   return (
     <>
@@ -435,25 +437,34 @@ export default async function HomePage() {
             <p className="mt-4 max-w-3xl text-base leading-8 text-[color:var(--muted-foreground)]">
               {settings.investmentCopy}
             </p>
-            <div className="mt-6 grid gap-4 lg:grid-cols-3">
-              {packages.slice(0, 3).map((item) => (
-                <div key={item.slug} className="overflow-hidden rounded-[1.5rem] bg-[color:var(--secondary)]/55">
-                  {"image" in item && item.image ? (
+            {investmentPackages.length ? (
+              <div className="mt-6 grid gap-4 lg:grid-cols-3">
+                {investmentPackages.map((item) => (
+                  <div key={item.slug} className="overflow-hidden rounded-[1.5rem] bg-[color:var(--secondary)]/55">
                     <div className="relative h-44">
-                      <Image src={String(item.image)} alt={item.name} fill className="object-cover" />
+                      <Image src={item.image} alt={item.name} fill className="object-cover" />
                     </div>
-                  ) : null}
-                  <div className="p-5">
-                    <p className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--foreground)]">
-                      {item.name}
-                    </p>
-                    <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                      {item.description}
-                    </p>
+                    <div className="p-5">
+                      <p className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--foreground)]">
+                        {item.name}
+                      </p>
+                      <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-6 rounded-[1.5rem] bg-[color:var(--secondary)]/35 p-5">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                  Packages coming soon
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[color:var(--foreground)]">
+                  We are preparing updated package options and images for this section.
+                </p>
+              </div>
+            )}
           </div>
           <CtaBanner
             title={settings.ctaBannerTitle}

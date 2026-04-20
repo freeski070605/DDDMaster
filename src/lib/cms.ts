@@ -103,14 +103,7 @@ export async function getPackages() {
 
   await connectToDatabase();
   const packages = await PackageModel.find().sort({ startingPrice: 1 }).lean();
-  return serialize(
-    packages.length
-      ? packages.map((item) => ({
-          ...fallbackPackages.find((fallback) => fallback.slug === item.slug),
-          ...item,
-        }))
-      : fallbackPackages,
-  );
+  return serialize(packages);
 }
 
 export async function getTestimonials() {
@@ -299,12 +292,7 @@ export async function getAdminCollectionItems(collection: AdminCollectionName) {
     case "testimonials":
       return serialize(await TestimonialModel.find().sort({ createdAt: -1 }).lean());
     case "packages":
-      return serialize(
-        (await PackageModel.find().sort({ startingPrice: 1 }).lean()).map((item) => ({
-          ...fallbackPackages.find((fallback) => fallback.slug === item.slug),
-          ...item,
-        })),
-      );
+      return serialize(await PackageModel.find().sort({ startingPrice: 1 }).lean());
     case "faqs":
       return serialize(await FAQModel.find().sort({ createdAt: -1 }).lean());
     case "services":
