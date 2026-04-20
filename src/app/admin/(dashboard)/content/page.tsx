@@ -155,7 +155,7 @@ export default async function AdminContentPage() {
 
       <CollectionManager
         title="Packages"
-        description="Update package tiers, starting prices, and add-ons."
+        description="Update package tiers, package photos, starting prices, and add-ons."
         collection="packages"
         items={packages as Array<Record<string, unknown>>}
         emptyItem={{
@@ -163,6 +163,7 @@ export default async function AdminContentPage() {
           slug: "",
           startingPrice: 0,
           description: "",
+          image: "",
           highlights: "",
           addOns: "",
           bestFor: "",
@@ -173,6 +174,7 @@ export default async function AdminContentPage() {
           { name: "slug", label: "Slug", type: "text" },
           { name: "startingPrice", label: "Starting price", type: "number" },
           { name: "description", label: "Description", type: "textarea" },
+          { name: "image", label: "Package image", type: "image" },
           { name: "highlights", label: "Highlights", type: "tags" },
           { name: "addOns", label: "Add-ons", type: "tags" },
           { name: "bestFor", label: "Best for", type: "text" },

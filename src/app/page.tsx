@@ -291,36 +291,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-          <div>
-            <SectionHeading
-              eyebrow="Testimonials"
-              title={settings.testimonialsHeadline}
-              description={settings.testimonialsCopy}
-            />
+      {featuredTestimonials.length ? (
+        <section className="section">
+          <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+            <div>
+              <SectionHeading
+                eyebrow="Testimonials"
+                title={settings.testimonialsHeadline}
+                description={settings.testimonialsCopy}
+              />
+            </div>
+            <Card className="bg-[linear-gradient(135deg,rgba(117,87,150,0.14),rgba(211,184,140,0.18))]">
+              <CardContent>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                  What the experience feels like
+                </p>
+                <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                  Clear communication, calm planning, and event-day confidence.
+                </h3>
+                <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
+                  We pair polished design with a process that is easy to follow, especially for
+                  busy families and hosts planning a meaningful event.
+                </p>
+              </CardContent>
+            </Card>
           </div>
-          <Card className="bg-[linear-gradient(135deg,rgba(117,87,150,0.14),rgba(211,184,140,0.18))]">
-            <CardContent>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
-                What the experience feels like
-              </p>
-              <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                Clear communication, calm planning, and event-day confidence.
-              </h3>
-              <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
-                We pair polished design with a process that is easy to follow, especially for
-                busy families and hosts planning a meaningful event.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="mx-auto mt-10 grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
-          {featuredTestimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.name} {...testimonial} />
-          ))}
-        </div>
-      </section>
+          <div className="mx-auto mt-10 grid w-full max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
+            {featuredTestimonials.map((testimonial) => (
+              <TestimonialCard key={testimonial.name} {...testimonial} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="section">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -402,13 +404,20 @@ export default async function HomePage() {
             </p>
             <div className="mt-6 grid gap-4 lg:grid-cols-3">
               {packages.slice(0, 3).map((item) => (
-                <div key={item.slug} className="rounded-[1.5rem] bg-[color:var(--secondary)]/55 p-5">
-                  <p className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--foreground)]">
-                    {item.name}
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                    {item.description}
-                  </p>
+                <div key={item.slug} className="overflow-hidden rounded-[1.5rem] bg-[color:var(--secondary)]/55">
+                  {"image" in item && item.image ? (
+                    <div className="relative h-44">
+                      <Image src={String(item.image)} alt={item.name} fill className="object-cover" />
+                    </div>
+                  ) : null}
+                  <div className="p-5">
+                    <p className="font-[family-name:var(--font-display)] text-2xl text-[color:var(--foreground)]">
+                      {item.name}
+                    </p>
+                    <p className="mt-2 text-sm leading-7 text-[color:var(--muted-foreground)]">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>

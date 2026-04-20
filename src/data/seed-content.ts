@@ -314,6 +314,7 @@ export const fallbackPackages = [
     startingPrice: 1500,
     description:
       "A polished focal install for intimate celebrations that need a strong visual moment without a full-room takeover.",
+    image: "/images/events/IMG_0509-2.jpg",
     highlights: [
       "One styled focal area",
       "Backdrop and premium prop pairing",
@@ -330,6 +331,7 @@ export const fallbackPackages = [
     startingPrice: 3200,
     description:
       "A more immersive room design with coordinated styling moments, layered materials, and stronger guest-facing impact.",
+    image: "/images/events/IMG_0808-2.jpg",
     highlights: [
       "Multiple styled areas",
       "Welcome display and focal backdrop",
@@ -346,6 +348,7 @@ export const fallbackPackages = [
     startingPrice: 4800,
     description:
       "A wedding-forward styling package for couples who want cohesive ceremony and reception decor with refined romantic detail.",
+    image: "/images/events/IMG_0822-2.jpg",
     highlights: [
       "Ceremony styling",
       "Reception design support",
@@ -362,6 +365,7 @@ export const fallbackPackages = [
     startingPrice: 6500,
     description:
       "Our most tailored offer for clients who want high-touch creative direction and a distinct design story from concept to execution.",
+    image: "/images/events/IMG_0822-2.jpg",
     highlights: [
       "Custom concept development",
       "Venue styling plan",

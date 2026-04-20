@@ -47,7 +47,7 @@ export default async function PackagesPage() {
               </p>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
                 {addOns.map((item) => (
-                  <li key={item}>• {item}</li>
+                  <li key={item}>&bull; {item}</li>
                 ))}
               </ul>
             </CardContent>
@@ -58,10 +58,10 @@ export default async function PackagesPage() {
                 What affects final cost
               </p>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                <li>• Venue size, logistics, and setup access windows</li>
-                <li>• The number of styled areas or design focal points</li>
-                <li>• Rental upgrades, florals, premium signage, and candles</li>
-                <li>• Custom builds or sourcing needs beyond standard inventory</li>
+                <li>&bull; Venue size, logistics, and setup access windows</li>
+                <li>&bull; The number of styled areas or design focal points</li>
+                <li>&bull; Rental upgrades, florals, premium signage, and candles</li>
+                <li>&bull; Custom builds or sourcing needs beyond standard inventory</li>
               </ul>
             </CardContent>
           </Card>

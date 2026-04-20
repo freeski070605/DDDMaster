@@ -6,6 +6,7 @@ const packageSchema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     startingPrice: { type: Number, required: true },
     description: { type: String, required: true },
+    image: { type: String, required: true },
     highlights: [{ type: String, required: true }],
     addOns: [{ type: String, required: true }],
     bestFor: { type: String, required: true },

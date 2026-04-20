@@ -38,9 +38,26 @@ export default async function TestimonialsPage() {
           ))}
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.name} {...testimonial} />
-          ))}
+          {testimonials.length ? (
+            testimonials.map((testimonial) => (
+              <TestimonialCard key={testimonial.name} {...testimonial} />
+            ))
+          ) : (
+            <Card className="lg:col-span-2">
+              <CardContent>
+                <p className="text-sm uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                  Testimonials coming soon
+                </p>
+                <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
+                  This page will show real client reviews once they are added in admin.
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
+                  Placeholder testimonials have been removed from the live site, so only
+                  published reviews appear here now.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

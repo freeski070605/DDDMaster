@@ -49,6 +49,7 @@ export const packageSchema = z.object({
   slug: z.string().min(2),
   startingPrice: z.coerce.number().min(0),
   description: z.string().min(20),
+  image: z.string().url(),
   highlights: z.array(z.string().min(2)).min(1),
   addOns: z.array(z.string().min(2)).min(1),
   bestFor: z.string().min(10),
