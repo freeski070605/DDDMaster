@@ -126,6 +126,10 @@ export const fallbackSiteSettings = {
   testimonialsHeadline: "Clients trust the work because the process feels steady from day one.",
   testimonialsCopy:
     "Design matters, but so does communication. Our clients come back because they feel supported, listened to, and confident along the way.",
+  testimonialsSupportEyebrow: "Why clients refer us",
+  testimonialsSupportTitle: "Clear communication, calm planning, and event-day confidence.",
+  testimonialsSupportCopy:
+    "We pair polished design with a process that feels easy to follow, so clients know what is happening and can enjoy the celebration more fully.",
   bookingSteps: [
     {
       title: "Inquire",

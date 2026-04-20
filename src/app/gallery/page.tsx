@@ -33,11 +33,10 @@ export default async function GalleryPage() {
                   Gallery coming soon
                 </p>
                 <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                  Gallery images will appear here once they are added in admin.
+                  Gallery images will appear here soon.
                 </h3>
                 <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                  Only real gallery items are shown now, so the admin dashboard and the live
-                  gallery stay in sync.
+                  We are preparing new event photos for this gallery.
                 </p>
               </CardContent>
             </Card>

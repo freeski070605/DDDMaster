@@ -117,6 +117,9 @@ export const settingsSchema = z.object({
   servicesCopy: z.string().min(20),
   testimonialsHeadline: z.string().min(10),
   testimonialsCopy: z.string().min(20),
+  testimonialsSupportEyebrow: z.string().min(2),
+  testimonialsSupportTitle: z.string().min(10),
+  testimonialsSupportCopy: z.string().min(20),
   bookingSteps: z.array(
     z.object({
       title: z.string().min(2),

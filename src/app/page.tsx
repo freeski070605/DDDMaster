@@ -218,11 +218,10 @@ export default async function HomePage() {
                     Gallery coming soon
                   </p>
                   <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                    New gallery images will appear here after they are added in admin.
+                    Fresh gallery images will appear here soon.
                   </h3>
                   <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                    The homepage and the admin dashboard now stay aligned, so only real
-                    gallery content appears on the live site.
+                    We are preparing new event images for this section.
                   </p>
                 </CardContent>
               </Card>
@@ -323,14 +322,13 @@ export default async function HomePage() {
             <Card className="bg-[linear-gradient(135deg,rgba(117,87,150,0.14),rgba(211,184,140,0.18))]">
               <CardContent>
                 <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
-                  What the experience feels like
+                  {settings.testimonialsSupportEyebrow}
                 </p>
                 <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                  Clear communication, calm planning, and event-day confidence.
+                  {settings.testimonialsSupportTitle}
                 </h3>
                 <p className="mt-4 text-base leading-8 text-[color:var(--muted-foreground)]">
-                  We pair polished design with a process that is easy to follow, especially for
-                  busy families and hosts planning a meaningful event.
+                  {settings.testimonialsSupportCopy}
                 </p>
               </CardContent>
             </Card>

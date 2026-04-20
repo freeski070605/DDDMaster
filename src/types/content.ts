@@ -59,6 +59,9 @@ export type SiteSettings = {
   servicesCopy: string;
   testimonialsHeadline: string;
   testimonialsCopy: string;
+  testimonialsSupportEyebrow: string;
+  testimonialsSupportTitle: string;
+  testimonialsSupportCopy: string;
   bookingSteps: BookingStep[];
   processHeadline: string;
   processCopy: string;

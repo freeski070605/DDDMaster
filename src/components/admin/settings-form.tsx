@@ -47,6 +47,9 @@ type SettingsFormState = {
   servicesCopy: string;
   testimonialsHeadline: string;
   testimonialsCopy: string;
+  testimonialsSupportEyebrow: string;
+  testimonialsSupportTitle: string;
+  testimonialsSupportCopy: string;
   bookingSteps: BookingStep[];
   processHeadline: string;
   processCopy: string;
@@ -206,9 +209,9 @@ function StatisticsEditor({ items, onChange }: StatisticsEditorProps) {
     <div className="space-y-4 rounded-[1.75rem] border border-[color:var(--border)] bg-white/70 p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h4 className="text-lg font-semibold text-[color:var(--foreground)]">Homepage stats</h4>
+          <h4 className="text-lg font-semibold text-[color:var(--foreground)]">Site stats</h4>
           <p className="mt-1 text-sm leading-6 text-[color:var(--muted-foreground)]">
-            Use short numbers and plain labels, like 150+ events styled.
+            These stats appear on the homepage and the testimonials page. Use real numbers only.
           </p>
         </div>
         <Button
@@ -342,10 +345,12 @@ function BookingStepsEditor({ items, onChange }: BookingStepsEditorProps) {
 function SectionCard({
   title,
   description,
+  appearsOn,
   children,
 }: {
   title: string;
   description: string;
+  appearsOn?: string[];
   children: React.ReactNode;
 }) {
   return (
@@ -358,6 +363,18 @@ function SectionCard({
           <p className="mt-2 max-w-3xl text-sm leading-7 text-[color:var(--muted-foreground)]">
             {description}
           </p>
+          {appearsOn?.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {appearsOn.map((item) => (
+                <span
+                  key={`${title}-${item}`}
+                  className="rounded-full bg-[color:var(--secondary)]/55 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--secondary-foreground)]"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
         {children}
       </CardContent>
@@ -395,6 +412,9 @@ function createInitialState(settings: SiteSettings): SettingsFormState {
     servicesCopy: settings.servicesCopy,
     testimonialsHeadline: settings.testimonialsHeadline,
     testimonialsCopy: settings.testimonialsCopy,
+    testimonialsSupportEyebrow: settings.testimonialsSupportEyebrow,
+    testimonialsSupportTitle: settings.testimonialsSupportTitle,
+    testimonialsSupportCopy: settings.testimonialsSupportCopy,
     bookingSteps: settings.bookingSteps,
     processHeadline: settings.processHeadline,
     processCopy: settings.processCopy,
@@ -554,14 +574,11 @@ export function SettingsForm({ settings }: SettingsFormProps) {
 
         <div className="flex flex-wrap gap-2 text-sm">
           {[
-            "Header contact",
-            "Hero area",
-            "Homepage images",
-            "Gallery intro",
-            "Services",
-            "Testimonials",
-            "Process steps",
-            "FAQ and CTA",
+            "Homepage top area",
+            "Homepage image sections",
+            "Reviews and social proof",
+            "Services and packages",
+            "Process and FAQ",
           ].map((label) => (
             <span
               key={label}
@@ -572,10 +589,41 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           ))}
         </div>
 
+        <Card className="bg-[color:var(--secondary)]/28">
+          <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                title: "Hero section",
+                copy: "Changes the very top of the homepage, including the big image, headline, buttons, and stats.",
+              },
+              {
+                title: "Gallery and showcase",
+                copy: "Changes the gallery intro text and the two large image sections lower on the homepage.",
+              },
+              {
+                title: "Testimonials and social proof",
+                copy: "Changes review headings, trust-building copy, and the stats shown on the testimonials page.",
+              },
+              {
+                title: "Final sections",
+                copy: "Changes the process, service areas, FAQ intro, package intro, and final call-to-action banner.",
+              },
+            ].map((item) => (
+              <div key={item.title} className="rounded-[1.5rem] bg-white/80 p-4">
+                <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[color:var(--muted-foreground)]">
+                  {item.title}
+                </p>
+                <p className="mt-2 text-sm leading-7 text-[color:var(--foreground)]">{item.copy}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
         <form className="space-y-6" onSubmit={handleSubmit}>
           <SectionCard
             title="Contact and scheduling"
             description="Keep your contact details and consultation length up to date."
+            appearsOn={["Site header", "Site footer", "Inquiry scheduling"]}
           >
             <div className="grid gap-5 md:grid-cols-2">
               <TextField
@@ -607,6 +655,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Hero section"
             description="This is the first thing people see when they land on the homepage."
+            appearsOn={["Homepage top section", "Homepage hero image", "Homepage stats"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
@@ -654,6 +703,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Brand story and highlights"
             description="These sections explain who you are and the types of events you want to feature."
+            appearsOn={["Homepage story area", "Homepage event labels", "Testimonials page stats"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextAreaField
@@ -683,6 +733,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Gallery introduction"
             description="This copy introduces the gallery preview section on the homepage."
+            appearsOn={["Homepage gallery intro"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
@@ -701,6 +752,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Showcase images and message"
             description="This section supports the homepage transformation story with two images and supporting text."
+            appearsOn={["Homepage showcase images", "Homepage social proof box"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
@@ -756,6 +808,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Services and testimonials"
             description="These headings introduce your services and review sections on the homepage."
+            appearsOn={["Homepage services section", "Homepage testimonials section"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
@@ -778,12 +831,31 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 value={formState.testimonialsCopy}
                 onChange={(value) => updateField("testimonialsCopy", value)}
               />
+              <TextField
+                label="Social proof badge"
+                value={formState.testimonialsSupportEyebrow}
+                helper="This small label sits above the trust message next to the testimonials on the homepage."
+                onChange={(value) => updateField("testimonialsSupportEyebrow", value)}
+              />
+              <TextField
+                label="Social proof headline"
+                value={formState.testimonialsSupportTitle}
+                helper="This replaces the hardcoded trust message next to homepage testimonials."
+                onChange={(value) => updateField("testimonialsSupportTitle", value)}
+              />
             </div>
+            <TextAreaField
+              label="Social proof description"
+              value={formState.testimonialsSupportCopy}
+              helper="Use real trust-building language here. This is shown beside homepage testimonials."
+              onChange={(value) => updateField("testimonialsSupportCopy", value)}
+            />
           </SectionCard>
 
           <SectionCard
             title="Process, areas, and FAQ"
             description="Update the sections that help visitors understand your process and where you work."
+            appearsOn={["Homepage process section", "Homepage service areas", "Homepage FAQ intro"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField
@@ -833,6 +905,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Packages and final call to action"
             description="This section closes the homepage with package guidance and your final booking prompt."
+            appearsOn={["Homepage package intro", "Homepage final banner"]}
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <TextField

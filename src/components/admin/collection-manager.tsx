@@ -17,11 +17,15 @@ type FieldConfig = {
   label: string;
   type: "text" | "textarea" | "number" | "checkbox" | "tags" | "select" | "image";
   options?: string[];
+  helper?: string;
+  placeholder?: string;
 };
 
 type CollectionManagerProps = {
+  sectionId?: string;
   title: string;
   description: string;
+  whereItShows?: string[];
   collection: "gallery" | "testimonials" | "packages" | "faqs" | "services";
   fields: FieldConfig[];
   items: Array<Record<string, unknown>>;
@@ -104,8 +108,10 @@ function formatSavedTime(date: Date) {
 }
 
 export function CollectionManager({
+  sectionId,
   title,
   description,
+  whereItShows,
   collection,
   fields,
   items,
@@ -269,7 +275,7 @@ export function CollectionManager({
   }
 
   return (
-    <Card className="bg-white/88">
+    <Card id={sectionId} className="bg-white/88 scroll-mt-24">
       <CardContent className="space-y-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -282,6 +288,18 @@ export function CollectionManager({
             <p className="mt-2 max-w-3xl text-sm leading-7 text-[color:var(--muted-foreground)]">
               {description}
             </p>
+            {whereItShows?.length ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {whereItShows.map((item) => (
+                  <span
+                    key={`${title}-${item}`}
+                    className="rounded-full bg-[color:var(--secondary)]/55 px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[color:var(--secondary-foreground)]"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-3">
             <div className="rounded-full bg-[color:var(--secondary)] px-4 py-2 text-sm text-[color:var(--secondary-foreground)]">
@@ -536,6 +554,7 @@ export function CollectionManager({
                     {field.type === "textarea" ? (
                       <Textarea
                         value={String(formState[field.name] ?? "")}
+                        placeholder={field.placeholder}
                         onChange={(event) =>
                           setFormState((current) => ({
                             ...current,
@@ -549,6 +568,7 @@ export function CollectionManager({
                       <Input
                         type={field.type === "number" ? "number" : "text"}
                         value={String(formState[field.name] ?? "")}
+                        placeholder={field.placeholder}
                         onChange={(event) =>
                           setFormState((current) => ({
                             ...current,
@@ -574,7 +594,7 @@ export function CollectionManager({
                           placeholder="One item per line"
                         />
                         <p className="text-sm leading-6 text-[color:var(--muted-foreground)]">
-                          Add one list item per line.
+                          {field.helper ?? "Add one list item per line."}
                         </p>
                       </>
                     ) : null}
@@ -626,6 +646,12 @@ export function CollectionManager({
                           }))
                         }
                       />
+                    ) : null}
+
+                    {field.type !== "tags" && field.helper ? (
+                      <p className="text-sm leading-6 text-[color:var(--muted-foreground)]">
+                        {field.helper}
+                      </p>
                     ) : null}
                   </div>
                 ))}

@@ -1,9 +1,9 @@
 import { SectionHeading } from "@/components/site/section-heading";
 import { TestimonialCard } from "@/components/site/testimonial-card";
 import { Card, CardContent } from "@/components/ui/card";
-import { homeStats } from "@/data/seed-content";
-import { getTestimonials } from "@/lib/cms";
+import { getSiteSettings, getTestimonials } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/seo";
+import type { SiteSettings } from "@/types/content";
 
 export const metadata = createPageMetadata({
   title: "Testimonials",
@@ -13,18 +13,22 @@ export const metadata = createPageMetadata({
 });
 
 export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
+  const [testimonials, rawSettings] = await Promise.all([
+    getTestimonials(),
+    getSiteSettings(),
+  ]);
+  const settings = rawSettings as SiteSettings;
 
   return (
     <div className="section">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Client love"
-          title="Reviews from clients who wanted their events to feel memorable, polished, and personal."
-          description="Our clients come to us for the visuals and stay confident because of the experience behind them."
+          title={settings.socialProofHeadline}
+          description={settings.socialProofCopy}
         />
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {homeStats.map((item) => (
+          {settings.statistics.map((item) => (
             <Card key={item.label}>
               <CardContent>
                 <p className="text-4xl font-semibold text-[color:var(--foreground)]">
@@ -49,11 +53,11 @@ export default async function TestimonialsPage() {
                   Testimonials coming soon
                 </p>
                 <h3 className="mt-4 font-[family-name:var(--font-display)] text-3xl text-[color:var(--foreground)]">
-                  This page will show real client reviews once they are added in admin.
+                  This page will show real client reviews once they are published.
                 </h3>
                 <p className="mt-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                  Placeholder testimonials have been removed from the live site, so only
-                  published reviews appear here now.
+                  Placeholder testimonials have been removed from the live site, so only real
+                  published reviews appear here.
                 </p>
               </CardContent>
             </Card>
