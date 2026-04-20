@@ -22,6 +22,7 @@ type SettingsFormState = {
   phone: string;
   email: string;
   instagramHandle: string;
+  instagramUrl: string;
   heroBadge: string;
   heroTitle: string;
   heroSubtitle: string;
@@ -45,6 +46,10 @@ type SettingsFormState = {
   showcaseSecondaryImageAlt: string;
   servicesHeadline: string;
   servicesCopy: string;
+  instagramSectionEyebrow: string;
+  instagramSectionTitle: string;
+  instagramSectionCopy: string;
+  instagramImages: string[];
   testimonialsHeadline: string;
   testimonialsCopy: string;
   testimonialsSupportEyebrow: string;
@@ -89,6 +94,13 @@ type ImageFieldProps = {
   altValue: string;
   onChange: (value: string) => void;
   onAltChange: (value: string) => void;
+};
+
+type ImageGalleryFieldProps = {
+  label: string;
+  helper: string;
+  value: string[];
+  onChange: (value: string[]) => void;
 };
 
 type ListEditorProps = {
@@ -155,6 +167,18 @@ function ImageField({
         onChange={(urls) => onChange(urls[0] ?? "")}
       />
       <TextField label={altLabel} value={altValue} onChange={onAltChange} />
+    </div>
+  );
+}
+
+function ImageGalleryField({ label, helper, value, onChange }: ImageGalleryFieldProps) {
+  return (
+    <div className="space-y-4 rounded-[1.75rem] border border-[color:var(--border)] bg-[color:var(--secondary)]/35 p-5">
+      <div>
+        <h4 className="text-lg font-semibold text-[color:var(--foreground)]">{label}</h4>
+        <p className="mt-1 text-sm leading-6 text-[color:var(--muted-foreground)]">{helper}</p>
+      </div>
+      <ImageUploadField label={label} multiple value={value} onChange={onChange} />
     </div>
   );
 }
@@ -387,6 +411,7 @@ function createInitialState(settings: SiteSettings): SettingsFormState {
     phone: settings.phone,
     email: settings.email,
     instagramHandle: settings.instagramHandle,
+    instagramUrl: settings.instagramUrl,
     heroBadge: settings.heroBadge,
     heroTitle: settings.heroTitle,
     heroSubtitle: settings.heroSubtitle,
@@ -410,6 +435,10 @@ function createInitialState(settings: SiteSettings): SettingsFormState {
     showcaseSecondaryImageAlt: settings.showcaseSecondaryImageAlt,
     servicesHeadline: settings.servicesHeadline,
     servicesCopy: settings.servicesCopy,
+    instagramSectionEyebrow: settings.instagramSectionEyebrow,
+    instagramSectionTitle: settings.instagramSectionTitle,
+    instagramSectionCopy: settings.instagramSectionCopy,
+    instagramImages: settings.instagramImages,
     testimonialsHeadline: settings.testimonialsHeadline,
     testimonialsCopy: settings.testimonialsCopy,
     testimonialsSupportEyebrow: settings.testimonialsSupportEyebrow,
@@ -487,6 +516,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     const payload = {
       ...formState,
       serviceAreas: formState.serviceAreas.map((item) => item.trim()).filter(Boolean),
+      instagramImages: formState.instagramImages.map((item) => item.trim()).filter(Boolean),
       statistics: formState.statistics
         .map((item) => ({
           value: item.value.trim(),
@@ -576,6 +606,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           {[
             "Homepage top area",
             "Homepage image sections",
+            "Instagram section",
             "Reviews and social proof",
             "Services and packages",
             "Process and FAQ",
@@ -623,7 +654,7 @@ export function SettingsForm({ settings }: SettingsFormProps) {
           <SectionCard
             title="Contact and scheduling"
             description="Keep your contact details and consultation length up to date."
-            appearsOn={["Site header", "Site footer", "Inquiry scheduling"]}
+            appearsOn={["Site header", "Site footer", "Instagram link", "Inquiry scheduling"]}
           >
             <div className="grid gap-5 md:grid-cols-2">
               <TextField
@@ -642,6 +673,12 @@ export function SettingsForm({ settings }: SettingsFormProps) {
                 value={formState.instagramHandle}
                 helper="Example: @divinedesigndecor"
                 onChange={(value) => updateField("instagramHandle", value)}
+              />
+              <TextField
+                label="Instagram profile link"
+                value={formState.instagramUrl}
+                helper="Paste the full Instagram URL used for the homepage section and footer link."
+                onChange={(value) => updateField("instagramUrl", value)}
               />
               <TextField
                 label="Consultation length in minutes"
@@ -849,6 +886,39 @@ export function SettingsForm({ settings }: SettingsFormProps) {
               value={formState.testimonialsSupportCopy}
               helper="Use real trust-building language here. This is shown beside homepage testimonials."
               onChange={(value) => updateField("testimonialsSupportCopy", value)}
+            />
+          </SectionCard>
+
+          <SectionCard
+            title="Instagram section"
+            description="This controls the Instagram block on the homepage, including the title, description, profile link, and the images shown there."
+            appearsOn={["Homepage Instagram section", "Site footer Instagram link"]}
+          >
+            <div className="grid gap-5 lg:grid-cols-2">
+              <TextField
+                label="Instagram section label"
+                value={formState.instagramSectionEyebrow}
+                helper="Small label shown above the Instagram headline."
+                onChange={(value) => updateField("instagramSectionEyebrow", value)}
+              />
+              <TextField
+                label="Instagram section headline"
+                value={formState.instagramSectionTitle}
+                helper="This replaces the hardcoded Instagram section title on the homepage."
+                onChange={(value) => updateField("instagramSectionTitle", value)}
+              />
+            </div>
+            <TextAreaField
+              label="Instagram section description"
+              value={formState.instagramSectionCopy}
+              helper="Explain what visitors will see in these images."
+              onChange={(value) => updateField("instagramSectionCopy", value)}
+            />
+            <ImageGalleryField
+              label="Instagram section images"
+              helper="Upload up to 8 real images for the Instagram section. If you leave this empty, visitors will see a simple follow-us message instead of fake images."
+              value={formState.instagramImages}
+              onChange={(value) => updateField("instagramImages", value)}
             />
           </SectionCard>
 

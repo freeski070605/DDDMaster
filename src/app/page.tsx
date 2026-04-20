@@ -298,14 +298,14 @@ export default async function HomePage() {
 
       <section className="section">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionHeading
-            eyebrow="Instagram"
-            title="A closer look at recent decor moments and celebration details."
-            description="Use this feed as inspiration for backdrops, table styling, welcome moments, and the overall feeling you want guests to walk into."
+          <InstagramStrip
+            eyebrow={settings.instagramSectionEyebrow}
+            title={settings.instagramSectionTitle}
+            copy={settings.instagramSectionCopy}
+            handle={settings.instagramHandle}
+            url={settings.instagramUrl}
+            images={settings.instagramImages}
           />
-          <div className="mt-10">
-            <InstagramStrip handle={settings.instagramHandle} />
-          </div>
         </div>
       </section>
 

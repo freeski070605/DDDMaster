@@ -34,6 +34,7 @@ export type SiteSettings = {
   phone: string;
   email: string;
   instagramHandle: string;
+  instagramUrl: string;
   heroBadge: string;
   heroTitle: string;
   heroSubtitle: string;
@@ -57,6 +58,10 @@ export type SiteSettings = {
   showcaseSecondaryImageAlt: string;
   servicesHeadline: string;
   servicesCopy: string;
+  instagramSectionEyebrow: string;
+  instagramSectionTitle: string;
+  instagramSectionCopy: string;
+  instagramImages: string[];
   testimonialsHeadline: string;
   testimonialsCopy: string;
   testimonialsSupportEyebrow: string;

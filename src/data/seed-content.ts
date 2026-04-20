@@ -87,6 +87,7 @@ export const fallbackSiteSettings = {
   phone: "(267) 555-0144",
   email: "hello@divinedesigndecor.com",
   instagramHandle: "@divinedesigndecor",
+  instagramUrl: "https://www.instagram.com/divinedesigndecor",
   heroBadge: "Warm, guided event decor for weddings, showers, and milestone celebrations",
   heroTitle: "Luxury Event Decor That Turns Moments Into Experiences",
   heroSubtitle:
@@ -123,6 +124,11 @@ export const fallbackSiteSettings = {
   servicesHeadline: "Choose the level of design support that fits your celebration.",
   servicesCopy:
     "Whether you need one standout focal moment or full event styling, we build the decor plan around your venue, your guest experience, and your goals.",
+  instagramSectionEyebrow: "Instagram",
+  instagramSectionTitle: "Follow recent decor moments, room reveals, and celebration details.",
+  instagramSectionCopy:
+    "Use this section to share real event photos that help visitors understand your design style and the kind of atmosphere you create.",
+  instagramImages: [],
   testimonialsHeadline: "Clients trust the work because the process feels steady from day one.",
   testimonialsCopy:
     "Design matters, but so does communication. Our clients come back because they feel supported, listened to, and confident along the way.",

@@ -62,6 +62,7 @@ export default async function RootLayout({
           <SiteFooter
             phone={settings.phone}
             email={settings.email}
+            instagramUrl={settings.instagramUrl}
             serviceAreas={settings.serviceAreas}
           />
           <StickyCta />

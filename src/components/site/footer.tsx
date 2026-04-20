@@ -2,16 +2,17 @@ import Link from "next/link";
 import { Instagram, Mail, MapPin, Phone } from "lucide-react";
 
 import { Logo } from "@/components/site/logo";
-import { env } from "@/lib/env";
 import { formatPhoneForHref } from "@/lib/utils";
 
 export function SiteFooter({
   phone,
   email,
+  instagramUrl,
   serviceAreas,
 }: {
   phone: string;
   email: string;
+  instagramUrl: string;
   serviceAreas: string[];
 }) {
   return (
@@ -55,7 +56,7 @@ export function SiteFooter({
               Serving {serviceAreas.join(", ")}
             </div>
             <a
-              href={env.instagramUrl}
+              href={instagramUrl}
               target="_blank"
               rel="noreferrer"
               className="flex items-center gap-3"
