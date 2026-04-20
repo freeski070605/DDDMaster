@@ -2,6 +2,34 @@ import { z } from "zod";
 
 import { budgetRanges, eventTypes } from "@/data/seed-content";
 
+function isValidAbsoluteUrl(value: string) {
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function isValidImageReference(value: string) {
+  const trimmed = value.trim();
+
+  if (!trimmed) {
+    return false;
+  }
+
+  return trimmed.startsWith("/") || isValidAbsoluteUrl(trimmed);
+}
+
+const imageReferenceSchema = z
+  .string()
+  .trim()
+  .refine(isValidImageReference, {
+    message: "Use a full image URL or a site image path that starts with /.",
+  });
+
+const optionalImageReferenceSchema = z.union([imageReferenceSchema, z.literal("")]);
+
 export const loginSchema = z.object({
   email: z.email(),
   password: z.string().min(8, "Password must be at least 8 characters."),
@@ -29,9 +57,9 @@ export const galleryItemSchema = z.object({
   category: z.enum(eventTypes),
   venue: z.string().min(2),
   description: z.string().min(20),
-  image: z.string().url(),
-  beforeImage: z.string().url().optional().or(z.literal("")),
-  afterImage: z.string().url().optional().or(z.literal("")),
+  image: imageReferenceSchema,
+  beforeImage: optionalImageReferenceSchema.optional(),
+  afterImage: optionalImageReferenceSchema.optional(),
   featured: z.boolean().default(false),
 });
 
@@ -40,7 +68,7 @@ export const testimonialSchema = z.object({
   role: z.string().min(2),
   rating: z.number().min(1).max(5),
   quote: z.string().min(20),
-  image: z.string().url(),
+  image: imageReferenceSchema,
   featured: z.boolean().default(false),
 });
 
@@ -49,7 +77,7 @@ export const packageSchema = z.object({
   slug: z.string().min(2),
   startingPrice: z.coerce.number().min(0),
   description: z.string().min(20),
-  image: z.string().url(),
+  image: imageReferenceSchema,
   highlights: z.array(z.string().min(2)).min(1),
   addOns: z.array(z.string().min(2)).min(1),
   bestFor: z.string().min(10),
@@ -71,7 +99,7 @@ export const serviceSchema = z.object({
   startingPrice: z.coerce.number().min(0),
   idealFor: z.string().min(20),
   includes: z.array(z.string().min(2)).min(1),
-  image: z.string().url(),
+  image: imageReferenceSchema,
   featured: z.boolean().default(false),
 });
 
@@ -93,7 +121,7 @@ export const settingsSchema = z.object({
   heroSubtitle: z.string().min(20),
   heroPrimaryCta: z.string().min(2),
   heroSecondaryCta: z.string().min(2),
-  heroImage: z.string().url(),
+  heroImage: imageReferenceSchema,
   heroImageAlt: z.string().min(8),
   story: z.string().min(20),
   mission: z.string().min(20),
@@ -110,16 +138,16 @@ export const settingsSchema = z.object({
   showcaseEyebrow: z.string().min(2),
   showcaseTitle: z.string().min(10),
   showcaseCopy: z.string().min(20),
-  showcasePrimaryImage: z.string().url(),
+  showcasePrimaryImage: imageReferenceSchema,
   showcasePrimaryImageAlt: z.string().min(8),
-  showcaseSecondaryImage: z.string().url(),
+  showcaseSecondaryImage: imageReferenceSchema,
   showcaseSecondaryImageAlt: z.string().min(8),
   servicesHeadline: z.string().min(10),
   servicesCopy: z.string().min(20),
   instagramSectionEyebrow: z.string().min(2),
   instagramSectionTitle: z.string().min(10),
   instagramSectionCopy: z.string().min(20),
-  instagramImages: z.array(z.string().url()).max(8),
+  instagramImages: z.array(imageReferenceSchema).max(8),
   testimonialsHeadline: z.string().min(10),
   testimonialsCopy: z.string().min(20),
   testimonialsSupportEyebrow: z.string().min(2),
@@ -143,7 +171,7 @@ export const settingsSchema = z.object({
   investmentCopy: z.string().min(20),
   ctaBannerTitle: z.string().min(10),
   ctaBannerCopy: z.string().min(20),
-  ctaBannerImage: z.string().url(),
+  ctaBannerImage: imageReferenceSchema,
   ctaBannerImageAlt: z.string().min(8),
   consultationDurationMinutes: z.coerce.number().int().min(15).max(120),
 });
