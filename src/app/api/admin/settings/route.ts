@@ -4,6 +4,7 @@ import { readAdminSession } from "@/lib/auth";
 import { fallbackSiteSettings } from "@/data/seed-content";
 import { isDatabaseConfigured } from "@/lib/env";
 import { connectToDatabase } from "@/lib/mongoose";
+import { revalidateAdminContent, revalidatePublicSite } from "@/lib/revalidate-site";
 import { settingsSchema } from "@/lib/validators";
 import { SiteSettingsModel } from "@/models";
 
@@ -32,6 +33,9 @@ export async function PUT(request: Request) {
       new: true,
       upsert: true,
     });
+
+    revalidatePublicSite();
+    revalidateAdminContent();
 
     return NextResponse.json({ success: true, settings });
   } catch (error) {

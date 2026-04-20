@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { addDays, format, setHours, setMinutes } from "date-fns";
 
 import {
@@ -54,6 +55,8 @@ function getFallbackAvailability() {
 }
 
 export async function getSiteSettings() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return fallbackSiteSettings;
   }
@@ -68,6 +71,8 @@ export async function getSiteSettings() {
 }
 
 export async function getServices() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [...fallbackServices];
   }
@@ -78,6 +83,8 @@ export async function getServices() {
 }
 
 export async function getServiceBySlug(slug: string) {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return fallbackServices.find((service) => service.slug === slug) ?? null;
   }
@@ -90,6 +97,8 @@ export async function getServiceBySlug(slug: string) {
 }
 
 export async function getPackages() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [...fallbackPackages];
   }
@@ -100,6 +109,8 @@ export async function getPackages() {
 }
 
 export async function getTestimonials() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [...fallbackTestimonials];
   }
@@ -110,6 +121,8 @@ export async function getTestimonials() {
 }
 
 export async function getFaqs() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [...fallbackFaqs];
   }
@@ -120,6 +133,8 @@ export async function getFaqs() {
 }
 
 export async function getGalleryItems() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [...fallbackGalleryItems];
   }
@@ -130,6 +145,8 @@ export async function getGalleryItems() {
 }
 
 export async function getGalleryItemBySlug(slug: string) {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return fallbackGalleryItems.find((item) => item.slug === slug) ?? null;
   }
@@ -142,6 +159,8 @@ export async function getGalleryItemBySlug(slug: string) {
 }
 
 export async function getAvailableConsultationSlots() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return getFallbackAvailability();
   }
@@ -158,6 +177,8 @@ export async function getAvailableConsultationSlots() {
 }
 
 export async function getAllConsultationSlots() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return getFallbackAvailability();
   }
@@ -168,6 +189,8 @@ export async function getAllConsultationSlots() {
 }
 
 export async function getInquiries() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return [];
   }
@@ -182,6 +205,8 @@ export async function getInquiries() {
 }
 
 export async function getInquiryById(id: string) {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return null;
   }
@@ -192,6 +217,8 @@ export async function getInquiryById(id: string) {
 }
 
 export async function getDashboardAnalytics() {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     return {
       totalInquiries: 0,
@@ -244,6 +271,8 @@ export async function getDashboardAnalytics() {
 }
 
 export async function getAdminCollectionItems(collection: AdminCollectionName) {
+  noStore();
+
   if (!isDatabaseConfigured()) {
     switch (collection) {
       case "gallery":

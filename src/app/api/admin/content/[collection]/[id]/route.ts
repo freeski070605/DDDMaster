@@ -4,6 +4,7 @@ import { readAdminSession } from "@/lib/auth";
 import { adminContentCollections } from "@/lib/admin-content";
 import { isDatabaseConfigured } from "@/lib/env";
 import { connectToDatabase } from "@/lib/mongoose";
+import { revalidateAdminContent, revalidatePublicSite } from "@/lib/revalidate-site";
 
 export async function PUT(
   request: Request,
@@ -48,6 +49,10 @@ export async function PUT(
       ) => Promise<unknown>;
     };
     const item = await model.findByIdAndUpdate(id, payload, { new: true });
+
+    revalidatePublicSite();
+    revalidateAdminContent();
+
     return NextResponse.json({ success: true, item });
   } catch (error) {
     return NextResponse.json(
@@ -97,6 +102,9 @@ export async function DELETE(
     findByIdAndDelete: (targetId: string) => Promise<unknown>;
   };
   await model.findByIdAndDelete(id);
+
+  revalidatePublicSite();
+  revalidateAdminContent();
 
   return NextResponse.json({ success: true });
 }

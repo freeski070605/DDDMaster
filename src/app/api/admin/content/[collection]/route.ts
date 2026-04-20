@@ -4,6 +4,7 @@ import { readAdminSession } from "@/lib/auth";
 import { adminContentCollections } from "@/lib/admin-content";
 import { isDatabaseConfigured } from "@/lib/env";
 import { connectToDatabase } from "@/lib/mongoose";
+import { revalidateAdminContent, revalidatePublicSite } from "@/lib/revalidate-site";
 
 export async function POST(
   request: Request,
@@ -40,6 +41,10 @@ export async function POST(
       create: (value: unknown) => Promise<unknown>;
     };
     const item = await model.create(payload);
+
+    revalidatePublicSite();
+    revalidateAdminContent();
+
     return NextResponse.json({ success: true, item });
   } catch (error) {
     return NextResponse.json(

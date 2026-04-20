@@ -16,6 +16,8 @@ type SettingsFormProps = {
   settings: SiteSettings;
 };
 
+type SaveTone = "neutral" | "success" | "error" | "warning";
+
 type SettingsFormState = {
   phone: string;
   email: string;
@@ -410,13 +412,41 @@ function createInitialState(settings: SiteSettings): SettingsFormState {
   };
 }
 
+function getFormFingerprint(formState: SettingsFormState) {
+  return JSON.stringify(formState);
+}
+
+function getStatusStyles(tone: SaveTone) {
+  switch (tone) {
+    case "success":
+      return "border-emerald-200 bg-emerald-50 text-emerald-900";
+    case "error":
+      return "border-red-200 bg-red-50 text-red-900";
+    case "warning":
+      return "border-amber-200 bg-amber-50 text-amber-900";
+    default:
+      return "border-[color:var(--border)] bg-white/80 text-[color:var(--foreground)]";
+  }
+}
+
+function formatSavedTime(date: Date) {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function SettingsForm({ settings }: SettingsFormProps) {
   const router = useRouter();
-  const [formState, setFormState] = useState<SettingsFormState>(() =>
-    createInitialState(settings),
-  );
+  const [formState, setFormState] = useState<SettingsFormState>(() => createInitialState(settings));
+  const [savedState, setSavedState] = useState<SettingsFormState>(() => createInitialState(settings));
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("");
+  const [statusTone, setStatusTone] = useState<SaveTone>("neutral");
+  const [statusMessage, setStatusMessage] = useState(
+    "You are editing the live homepage, plus the phone and email shown in the site header and footer.",
+  );
+
+  const hasUnsavedChanges = getFormFingerprint(formState) !== getFormFingerprint(savedState);
 
   function updateField<Key extends keyof SettingsFormState>(
     field: Key,
@@ -431,7 +461,8 @@ export function SettingsForm({ settings }: SettingsFormProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSaving(true);
-    setMessage("");
+    setStatusTone("neutral");
+    setStatusMessage("Saving homepage changes now...");
 
     const payload = {
       ...formState,
@@ -464,11 +495,18 @@ export function SettingsForm({ settings }: SettingsFormProps) {
     setSaving(false);
 
     if (!response.ok) {
-      setMessage(result.error ?? "Unable to save settings.");
+      setStatusTone("error");
+      setStatusMessage(result.error ?? "Unable to save settings.");
       return;
     }
 
-    setMessage("Homepage content saved.");
+    const nextSavedState = createInitialState(result.settings as SiteSettings);
+    setSavedState(nextSavedState);
+    setFormState(nextSavedState);
+    setStatusTone("success");
+    setStatusMessage(
+      `Homepage changes saved at ${formatSavedTime(new Date())}. The public site has been refreshed.`,
+    );
     router.refresh();
   }
 
@@ -493,6 +531,45 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             Designed for simple editing: each section is grouped by what visitors see on
             the page.
           </div>
+        </div>
+
+        <div
+          className={`rounded-[1.75rem] border px-5 py-4 text-sm leading-7 ${getStatusStyles(
+            saving ? "neutral" : statusTone === "neutral" && hasUnsavedChanges ? "warning" : statusTone,
+          )}`}
+        >
+          <p className="font-semibold">
+            {saving
+              ? "Saving homepage changes..."
+              : statusMessage}
+          </p>
+          <p className="mt-1">
+            {saving
+              ? "Please wait while your content and images are being updated."
+              : hasUnsavedChanges
+                ? "You have unsaved changes on this page."
+                : "No unsaved changes right now."}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2 text-sm">
+          {[
+            "Header contact",
+            "Hero area",
+            "Homepage images",
+            "Gallery intro",
+            "Services",
+            "Testimonials",
+            "Process steps",
+            "FAQ and CTA",
+          ].map((label) => (
+            <span
+              key={label}
+              className="rounded-full bg-white/80 px-4 py-2 text-[color:var(--muted-foreground)] ring-1 ring-[color:var(--border)]"
+            >
+              {label}
+            </span>
+          ))}
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -781,17 +858,20 @@ export function SettingsForm({ settings }: SettingsFormProps) {
             </div>
           </SectionCard>
 
-          {message ? (
-            <p className="text-sm font-medium text-[color:var(--muted-foreground)]">{message}</p>
-          ) : null}
-
           <div className="sticky bottom-4 flex justify-end">
-            <Button type="submit" size="lg" disabled={saving} className="min-w-56">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={saving || !hasUnsavedChanges}
+              className="min-w-56"
+            >
               {saving ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
                   Saving changes
                 </>
+              ) : !hasUnsavedChanges ? (
+                "All changes saved"
               ) : (
                 "Save homepage settings"
               )}

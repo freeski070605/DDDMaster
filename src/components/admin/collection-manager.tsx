@@ -28,6 +28,8 @@ type CollectionManagerProps = {
   emptyItem: Record<string, unknown>;
 };
 
+type FeedbackTone = "neutral" | "success" | "error" | "warning";
+
 function getItemTitle(item: Record<string, unknown>) {
   return String(item.title ?? item.name ?? item.question ?? "Untitled");
 }
@@ -73,6 +75,26 @@ function getSingularLabel(title: string) {
   return title.toLowerCase();
 }
 
+function getFeedbackStyles(tone: FeedbackTone) {
+  switch (tone) {
+    case "success":
+      return "border-emerald-200 bg-emerald-50 text-emerald-900";
+    case "error":
+      return "border-red-200 bg-red-50 text-red-900";
+    case "warning":
+      return "border-amber-200 bg-amber-50 text-amber-900";
+    default:
+      return "border-[color:var(--border)] bg-white/80 text-[color:var(--foreground)]";
+  }
+}
+
+function formatSavedTime(date: Date) {
+  return new Intl.DateTimeFormat(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function CollectionManager({
   title,
   description,
@@ -86,7 +108,10 @@ export function CollectionManager({
   const [formState, setFormState] = useState<Record<string, unknown>>(emptyItem);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [feedbackTone, setFeedbackTone] = useState<FeedbackTone>("neutral");
+  const [message, setMessage] = useState(
+    `Choose a ${singularLabel} on the left, or create a new one here.`,
+  );
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredItems = items.filter((item) => {
@@ -112,13 +137,18 @@ export function CollectionManager({
 
     setFormState(nextState);
     setEditingId(String(item._id));
-    setMessage("");
+    setFeedbackTone("neutral");
+    setMessage(`Editing "${getItemTitle(item)}". Save when you are ready to publish the change.`);
   }
 
-  function reset() {
+  function reset(options?: { preserveMessage?: boolean }) {
     setFormState(emptyItem);
     setEditingId(null);
-    setMessage("");
+
+    if (!options?.preserveMessage) {
+      setFeedbackTone("neutral");
+      setMessage(`Creating a new ${singularLabel}. Nothing goes live until you save it.`);
+    }
   }
 
   function buildPayload() {
@@ -140,27 +170,32 @@ export function CollectionManager({
     const source = String(formState.title ?? formState.name ?? "");
 
     if (!source.trim()) {
+      setFeedbackTone("warning");
       setMessage("Add a title or name first, then use Fill slug.");
       return;
     }
 
+    setFeedbackTone("neutral");
     setFormState((current) => ({
       ...current,
       slug: slugify(source),
     }));
+    setMessage("Slug filled from the current title or name.");
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const isEditing = Boolean(editingId);
     setLoading(true);
-    setMessage("");
+    setFeedbackTone("neutral");
+    setMessage(`Saving this ${singularLabel} now...`);
 
     const response = await fetch(
-      editingId
+      isEditing
         ? `/api/admin/content/${collection}/${editingId}`
         : `/api/admin/content/${collection}`,
       {
-        method: editingId ? "PUT" : "POST",
+        method: isEditing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPayload()),
       },
@@ -170,16 +205,28 @@ export function CollectionManager({
     setLoading(false);
 
     if (!response.ok) {
+      setFeedbackTone("error");
       setMessage(result.error ?? "Unable to save item.");
       return;
     }
 
-    setMessage(editingId ? "Item updated." : "Item created.");
-    reset();
+    const savedItem =
+      result.item && typeof result.item === "object"
+        ? (result.item as Record<string, unknown>)
+        : formState;
+    const savedTitle = getItemTitle(savedItem);
+
+    setFeedbackTone("success");
+    setMessage(
+      `${isEditing ? "Saved changes to" : "Created"} "${savedTitle}" at ${formatSavedTime(
+        new Date(),
+      )}. The admin list and public site have been refreshed.`,
+    );
+    reset({ preserveMessage: true });
     router.refresh();
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: string, itemTitle: string) {
     const confirmed = window.confirm("Delete this item?");
 
     if (!confirmed) {
@@ -193,15 +240,22 @@ export function CollectionManager({
     const result = await response.json();
 
     if (!response.ok) {
+      setFeedbackTone("error");
       setMessage(result.error ?? "Unable to delete item.");
       return;
     }
 
     if (editingId === id) {
-      reset();
+      setFormState(emptyItem);
+      setEditingId(null);
     }
 
-    setMessage("Item deleted.");
+    setFeedbackTone("success");
+    setMessage(
+      `Deleted "${itemTitle}" at ${formatSavedTime(
+        new Date(),
+      )}. The admin list and public site have been refreshed.`,
+    );
     router.refresh();
   }
 
@@ -224,11 +278,26 @@ export function CollectionManager({
             <div className="rounded-full bg-[color:var(--secondary)] px-4 py-2 text-sm text-[color:var(--secondary-foreground)]">
               {items.length} total items
             </div>
-            <Button type="button" variant="secondary" onClick={reset}>
+            <Button type="button" variant="secondary" onClick={() => reset()}>
               <Plus className="size-4" />
               Add new {singularLabel}
             </Button>
           </div>
+        </div>
+
+        <div
+          className={`rounded-[1.75rem] border px-5 py-4 text-sm leading-7 ${getFeedbackStyles(
+            loading ? "neutral" : feedbackTone,
+          )}`}
+        >
+          <p className="font-semibold">
+            {loading
+              ? `Saving ${editingId ? "changes to this item" : `this ${singularLabel}`}...`
+              : editingId
+                ? `Currently editing: ${getItemTitle(formState)}`
+                : `Creating a new ${singularLabel}`}
+          </p>
+          <p className="mt-1">{message}</p>
         </div>
 
         <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
@@ -305,7 +374,9 @@ export function CollectionManager({
                               <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => void handleDelete(String(item._id))}
+                                onClick={() =>
+                                  void handleDelete(String(item._id), getItemTitle(item))
+                                }
                               >
                                 <Trash2 className="size-4" />
                                 Delete
@@ -336,7 +407,7 @@ export function CollectionManager({
                 </h3>
               </div>
               {editingId ? (
-                <Button type="button" variant="secondary" onClick={reset}>
+                <Button type="button" variant="secondary" onClick={() => reset()}>
                   Cancel edit
                 </Button>
               ) : null}
@@ -458,10 +529,6 @@ export function CollectionManager({
                 ))}
               </div>
 
-              {message ? (
-                <p className="text-sm font-medium text-[color:var(--muted-foreground)]">{message}</p>
-              ) : null}
-
               <div className="flex flex-wrap gap-3">
                 <Button type="submit" size="lg" disabled={loading}>
                   {loading ? (
@@ -477,7 +544,7 @@ export function CollectionManager({
                   )}
                 </Button>
                 {editingId ? (
-                  <Button type="button" variant="outline" size="lg" onClick={reset}>
+                  <Button type="button" variant="outline" size="lg" onClick={() => reset()}>
                     Clear form
                   </Button>
                 ) : null}
