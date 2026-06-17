@@ -27,8 +27,8 @@ export function InquiryForm({
   const form = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       phone: "",
       eventType: "Wedding",
@@ -113,11 +113,11 @@ export function InquiryForm({
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field label="First Name" error={form.formState.errors.firstName?.message}>
-              <Input autoComplete="given-name" {...form.register("firstName")} />
+            <Field label="First Name" error={form.formState.errors.first_name?.message}>
+              <Input autoComplete="given-name" {...form.register("first_name")} />
             </Field>
-            <Field label="Last Name" error={form.formState.errors.lastName?.message}>
-              <Input autoComplete="family-name" {...form.register("lastName")} />
+            <Field label="Last Name" error={form.formState.errors.last_name?.message}>
+              <Input autoComplete="family-name" {...form.register("last_name")} />
             </Field>
             <Field label="Email" error={form.formState.errors.email?.message}>
               <Input type="email" autoComplete="email" {...form.register("email")} />

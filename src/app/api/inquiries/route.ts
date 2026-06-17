@@ -10,7 +10,7 @@ import { ConsultationAvailabilityModel, InquiryModel } from "@/models";
 export async function POST(request: Request) {
   try {
     const payload = inquirySchema.parse(await request.json());
-    const fullName = `${payload.firstName} ${payload.lastName}`.trim();
+    const fullName = `${payload.first_name} ${payload.last_name}`.trim();
 
     if (payload.website) {
       return NextResponse.json({ success: true });
@@ -44,6 +44,8 @@ export async function POST(request: Request) {
 
         const inquiry = await InquiryModel.create({
           ...payload,
+          firstName: payload.first_name,
+          lastName: payload.last_name,
           fullName,
           eventDate: new Date(payload.eventDate),
           consultationSlotId,

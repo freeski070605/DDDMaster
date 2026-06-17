@@ -36,8 +36,8 @@ export const loginSchema = z.object({
 });
 
 export const inquirySchema = z.object({
-  firstName: z.string().min(1, "Please enter your first name."),
-  lastName: z.string().min(1, "Please enter your last name."),
+  first_name: z.string().min(1, "Please enter your first name."),
+  last_name: z.string().min(1, "Please enter your last name."),
   email: z.email(),
   phone: z.string().min(10, "Please include a valid phone number."),
   eventType: z.enum(eventTypes),
