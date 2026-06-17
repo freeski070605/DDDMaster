@@ -13,7 +13,7 @@ export function ExternalTrackingScript() {
   return (
     <Script
       id="leadconnector-external-tracking"
-      src="https://link.msgsndr.com/js/external-tracking.js"
+      src="/js/external-tracking.js"
       data-tracking-id="tk_c3a113c684684950971185e76007669e"
       strategy="afterInteractive"
     />

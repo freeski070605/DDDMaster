@@ -1,10 +1,9 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useRef, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,45 +14,97 @@ import { budgetRanges, eventTypes } from "@/data/seed-content";
 import { inquirySchema } from "@/lib/validators";
 
 type InquiryFormValues = z.input<typeof inquirySchema>;
+type FieldErrors = Partial<Record<keyof InquiryFormValues, string>>;
+
+const crmFields = {
+  firstName: "first_name",
+  lastName: "last_name",
+  email: "email",
+  phone: "phone",
+  eventDate: "Event Date",
+  eventType: "Event Type",
+  venue: "Event Location / Venue",
+  eventStartTime: "Event Start Time",
+  eventThemeOrColors: "Event Theme or Colors",
+  guestCount: "Estimated Guest Count",
+  installationTime: "Installation Time",
+  strikeTime: "Strike / Breakdown Time",
+  servicesNeeded: "Which services are you interested in?",
+  budgetRange: "What is your estimated décor budget?",
+  inspirationNotes: "Tell us more about your event or design vision.",
+  marketingConsent: "Marketing Consent",
+} as const;
+
+function getText(formData: FormData, name: string) {
+  return String(formData.get(name) ?? "").trim();
+}
+
+function getAllText(formData: FormData, name: string) {
+  return formData
+    .getAll(name)
+    .map((value) => String(value).trim())
+    .filter(Boolean);
+}
+
+function payloadFromForm(formData: FormData): InquiryFormValues {
+  return {
+    first_name: getText(formData, crmFields.firstName),
+    last_name: getText(formData, crmFields.lastName),
+    email: getText(formData, crmFields.email),
+    phone: getText(formData, crmFields.phone),
+    eventType: getText(formData, crmFields.eventType) as InquiryFormValues["eventType"],
+    eventDate: getText(formData, crmFields.eventDate),
+    eventStartTime: getText(formData, crmFields.eventStartTime),
+    venue: getText(formData, crmFields.venue),
+    eventThemeOrColors: getText(formData, crmFields.eventThemeOrColors),
+    budgetRange: getText(formData, crmFields.budgetRange) as InquiryFormValues["budgetRange"],
+    guestCount: Number(getText(formData, crmFields.guestCount)),
+    installationTime: getText(formData, crmFields.installationTime),
+    strikeTime: getText(formData, crmFields.strikeTime),
+    inspirationNotes: getText(formData, crmFields.inspirationNotes),
+    servicesNeeded: getAllText(formData, crmFields.servicesNeeded),
+    inspirationImages: [],
+    consultationSlotId: getText(formData, "consultationSlotId"),
+    marketingConsent: formData.has(crmFields.marketingConsent),
+    website: getText(formData, "website"),
+  };
+}
 
 export function InquiryForm({
   services,
 }: {
   services: ReadonlyArray<{ title: string }>;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [submitting, setSubmitting] = useState(false);
 
-  const form = useForm<InquiryFormValues>({
-    resolver: zodResolver(inquirySchema),
-    defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      eventType: "Wedding",
-      eventDate: "",
-      eventStartTime: "",
-      venue: "",
-      eventThemeOrColors: "",
-      budgetRange: "$3,000 - $5,000",
-      guestCount: 50,
-      installationTime: "",
-      strikeTime: "",
-      inspirationNotes: "",
-      servicesNeeded: [],
-      inspirationImages: [],
-      consultationSlotId: "",
-      marketingConsent: false,
-      website: "",
-    },
-  });
-
-  const submitting = form.formState.isSubmitting;
-  const selectedServices = form.watch("servicesNeeded") ?? [];
-
-  async function onSubmit(values: InquiryFormValues) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setSubmitError("");
+    setFieldErrors({});
+
+    const result = inquirySchema.safeParse(payloadFromForm(new FormData(event.currentTarget)));
+
+    if (!result.success) {
+      const nextErrors: FieldErrors = {};
+
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as keyof InquiryFormValues | undefined;
+
+        if (field && !nextErrors[field]) {
+          nextErrors[field] = issue.message;
+        }
+      }
+
+      setFieldErrors(nextErrors);
+      setSubmitError("Please complete the required fields before submitting.");
+      return;
+    }
+
+    setSubmitting(true);
 
     try {
       const response = await fetch("/api/inquiries", {
@@ -61,24 +112,22 @@ export function InquiryForm({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(result.data),
       });
 
-      const result = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error ?? "Unable to submit inquiry.");
+        throw new Error(responseData.error ?? "Unable to submit inquiry.");
       }
 
       setSubmitted(true);
-      form.reset();
+      formRef.current?.reset();
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to submit inquiry.");
+    } finally {
+      setSubmitting(false);
     }
-  }
-
-  function onInvalid() {
-    setSubmitError("Please complete the required fields before submitting.");
   }
 
   if (submitted) {
@@ -107,31 +156,36 @@ export function InquiryForm({
     <Card>
       <CardContent>
         <form
+          ref={formRef}
           id="event-inquiry-form"
           name="Event Inquiry Form"
+          data-form-id="6xA2Z6YDHU2YM26MEREd"
+          data-form-name="Event Inquiry Form"
           className="space-y-6"
-          onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+          onSubmit={onSubmit}
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field label="First Name" error={form.formState.errors.first_name?.message}>
-              <Input autoComplete="given-name" {...form.register("first_name")} />
+            <Field label="First Name" error={fieldErrors.first_name}>
+              <Input name={crmFields.firstName} autoComplete="given-name" required />
             </Field>
-            <Field label="Last Name" error={form.formState.errors.last_name?.message}>
-              <Input autoComplete="family-name" {...form.register("last_name")} />
+            <Field label="Last Name" error={fieldErrors.last_name}>
+              <Input name={crmFields.lastName} autoComplete="family-name" required />
             </Field>
-            <Field label="Email" error={form.formState.errors.email?.message}>
-              <Input type="email" autoComplete="email" {...form.register("email")} />
+            <Field label="Email" error={fieldErrors.email}>
+              <Input name={crmFields.email} type="email" autoComplete="email" required />
             </Field>
-            <Field label="Phone" error={form.formState.errors.phone?.message}>
-              <Input type="tel" autoComplete="tel" {...form.register("phone")} />
+            <Field label="Phone" error={fieldErrors.phone}>
+              <Input name={crmFields.phone} type="tel" autoComplete="tel" required />
             </Field>
-            <Field label="Event Date" error={form.formState.errors.eventDate?.message}>
-              <Input type="date" {...form.register("eventDate")} />
+            <Field label="Event Date" error={fieldErrors.eventDate}>
+              <Input name={crmFields.eventDate} type="date" required />
             </Field>
-            <Field label="Event Type" error={form.formState.errors.eventType?.message}>
+            <Field label="Event Type" error={fieldErrors.eventType}>
               <select
+                name={crmFields.eventType}
                 className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
-                {...form.register("eventType")}
+                defaultValue="Wedding"
+                required
               >
                 {eventTypes.map((item) => (
                   <option key={item} value={item}>
@@ -140,76 +194,56 @@ export function InquiryForm({
                 ))}
               </select>
             </Field>
-            <Field label="Event Location / Venue" error={form.formState.errors.venue?.message}>
-              <Input {...form.register("venue")} />
+            <Field label="Event Location / Venue" error={fieldErrors.venue}>
+              <Input name={crmFields.venue} required />
             </Field>
-            <Field label="Event Start Time" error={form.formState.errors.eventStartTime?.message}>
-              <Input type="time" {...form.register("eventStartTime")} />
+            <Field label="Event Start Time" error={fieldErrors.eventStartTime}>
+              <Input name={crmFields.eventStartTime} type="time" />
             </Field>
-            <Field
-              label="Event Theme or Colors"
-              error={form.formState.errors.eventThemeOrColors?.message}
-            >
-              <Input {...form.register("eventThemeOrColors")} />
+            <Field label="Event Theme or Colors" error={fieldErrors.eventThemeOrColors}>
+              <Input name={crmFields.eventThemeOrColors} />
             </Field>
-            <Field label="Estimated Guest Count" error={form.formState.errors.guestCount?.message}>
-              <Input type="number" min={1} {...form.register("guestCount", { valueAsNumber: true })} />
+            <Field label="Estimated Guest Count" error={fieldErrors.guestCount}>
+              <Input name={crmFields.guestCount} type="number" min={1} defaultValue={50} required />
             </Field>
-            <Field label="Installation Time" error={form.formState.errors.installationTime?.message}>
-              <Input type="time" {...form.register("installationTime")} />
+            <Field label="Installation Time" error={fieldErrors.installationTime}>
+              <Input name={crmFields.installationTime} type="time" />
             </Field>
-            <Field
-              label="Strike / Breakdown Time"
-              error={form.formState.errors.strikeTime?.message}
-            >
-              <Input type="time" {...form.register("strikeTime")} />
+            <Field label="Strike / Breakdown Time" error={fieldErrors.strikeTime}>
+              <Input name={crmFields.strikeTime} type="time" />
             </Field>
           </div>
 
           <Field
             label="Which services are you interested in?"
-            error={form.formState.errors.servicesNeeded?.message}
+            error={fieldErrors.servicesNeeded}
           >
             <div className="grid gap-3 sm:grid-cols-2">
-              {services.map((service) => {
-                const checked = selectedServices.includes(service.title);
-
-                return (
-                  <label
-                    key={service.title}
-                    className="flex items-center gap-3 rounded-2xl border border-[color:var(--border)] bg-white/70 px-4 py-3 text-sm"
-                  >
-                    <input
-                      type="checkbox"
-                      name="servicesNeeded"
-                      value={service.title}
-                      checked={checked}
-                      onChange={(event) => {
-                        const current = form.getValues("servicesNeeded");
-                        const serviceTitle = event.target.value;
-                        form.setValue(
-                          "servicesNeeded",
-                          event.target.checked
-                            ? [...current, serviceTitle]
-                            : current.filter((item) => item !== serviceTitle),
-                          { shouldValidate: true },
-                        );
-                      }}
-                    />
-                    {service.title}
-                  </label>
-                );
-              })}
+              {services.map((service) => (
+                <label
+                  key={service.title}
+                  className="flex items-center gap-3 rounded-2xl border border-[color:var(--border)] bg-white/70 px-4 py-3 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    name={crmFields.servicesNeeded}
+                    value={service.title}
+                  />
+                  {service.title}
+                </label>
+              ))}
             </div>
           </Field>
 
           <Field
             label="What is your estimated décor budget?"
-            error={form.formState.errors.budgetRange?.message}
+            error={fieldErrors.budgetRange}
           >
             <select
+              name={crmFields.budgetRange}
               className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
-              {...form.register("budgetRange")}
+              defaultValue="$3,000 - $5,000"
+              required
             >
               {budgetRanges.map((item) => (
                 <option key={item} value={item}>
@@ -221,19 +255,22 @@ export function InquiryForm({
 
           <Field
             label="Tell us more about your event or design vision."
-            error={form.formState.errors.inspirationNotes?.message}
+            error={fieldErrors.inspirationNotes}
           >
             <Textarea
+              name={crmFields.inspirationNotes}
+              minLength={20}
               placeholder="Share the feeling, colors, venue details, focal moments, and any must-haves."
-              {...form.register("inspirationNotes")}
+              required
             />
           </Field>
 
           <label className="flex items-start gap-3 rounded-2xl border border-[color:var(--border)] bg-white/70 px-4 py-3 text-sm leading-6 text-[color:var(--muted-foreground)]">
             <input
+              name={crmFields.marketingConsent}
+              value="Yes"
               type="checkbox"
               className="mt-1"
-              {...form.register("marketingConsent")}
             />
             <span>
               By checking this box, I consent to receive marketing and promotional
@@ -243,8 +280,8 @@ export function InquiryForm({
             </span>
           </label>
 
-          <input type="text" className="hidden" tabIndex={-1} autoComplete="off" {...form.register("website")} />
-          <input type="hidden" {...form.register("consultationSlotId")} />
+          <input type="text" name="website" className="hidden" tabIndex={-1} autoComplete="off" />
+          <input type="hidden" name="consultationSlotId" />
 
           {submitError ? <p className="text-sm text-red-600">{submitError}</p> : null}
 
@@ -271,7 +308,7 @@ function Field({
 }: {
   label: string;
   error?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="space-y-2">
