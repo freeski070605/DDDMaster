@@ -1,7 +1,7 @@
-import { InquiryForm } from "@/components/forms/inquiry-form";
+import Script from "next/script";
+
 import { SectionHeading } from "@/components/site/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
-import { inquiryServiceOptions } from "@/data/seed-content";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -12,8 +12,6 @@ export const metadata = createPageMetadata({
 });
 
 export default function InquirePage() {
-  const services = inquiryServiceOptions.map((title) => ({ title }));
-
   return (
     <div className="section">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
@@ -37,7 +35,38 @@ export default function InquirePage() {
             </CardContent>
           </Card>
         </div>
-        <InquiryForm services={services} />
+        <Card className="overflow-hidden bg-white/92 shadow-[0_30px_100px_rgba(95,73,123,0.14)]">
+          <CardContent className="p-0">
+            <div className="border-b border-[color:var(--border)] bg-[color:var(--secondary)]/45 px-5 py-4 sm:px-6">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[color:var(--muted-foreground)]">
+                Event inquiry form
+              </p>
+            </div>
+            <div className="h-[1881px] w-full bg-white">
+              <iframe
+                src="https://api.leadconnectorhq.com/widget/form/6xA2Z6YDHU2YM26MEREd"
+                style={{ width: "100%", height: "100%", border: "none", borderRadius: 3 }}
+                id="inline-6xA2Z6YDHU2YM26MEREd"
+                data-layout="{'id':'INLINE'}"
+                data-trigger-type="alwaysShow"
+                data-trigger-value=""
+                data-activation-type="alwaysActivated"
+                data-activation-value=""
+                data-deactivation-type="neverDeactivate"
+                data-deactivation-value=""
+                data-form-name="Event Inquiry Form"
+                data-height="1881"
+                data-layout-iframe-id="inline-6xA2Z6YDHU2YM26MEREd"
+                data-form-id="6xA2Z6YDHU2YM26MEREd"
+                title="Event Inquiry Form"
+              />
+            </div>
+          </CardContent>
+        </Card>
+        <Script
+          src="https://link.msgsndr.com/js/form_embed.js"
+          strategy="afterInteractive"
+        />
       </div>
     </div>
   );
