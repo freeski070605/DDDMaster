@@ -76,19 +76,20 @@ export function InquiryForm({
   services: ReadonlyArray<{ title: string }>;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const nativeSubmitStartedRef = useRef(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
     setSubmitError("");
     setFieldErrors({});
 
     const result = inquirySchema.safeParse(payloadFromForm(new FormData(event.currentTarget)));
 
     if (!result.success) {
+      event.preventDefault();
       const nextErrors: FieldErrors = {};
 
       for (const issue of result.error.issues) {
@@ -104,29 +105,16 @@ export function InquiryForm({
       return;
     }
 
+    nativeSubmitStartedRef.current = true;
     setSubmitting(true);
+  }
 
-    try {
-      const response = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(result.data),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.error ?? "Unable to submit inquiry.");
-      }
-
+  function onNativeSubmitComplete() {
+    if (nativeSubmitStartedRef.current) {
+      nativeSubmitStartedRef.current = false;
+      setSubmitting(false);
       setSubmitted(true);
       formRef.current?.reset();
-    } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Unable to submit inquiry.");
-    } finally {
-      setSubmitting(false);
     }
   }
 
@@ -161,8 +149,11 @@ export function InquiryForm({
           name="Event Inquiry Form"
           data-form-id="6xA2Z6YDHU2YM26MEREd"
           data-form-name="Event Inquiry Form"
+          action="/api/inquiries"
           className="space-y-6"
+          method="post"
           onSubmit={onSubmit}
+          target="inquiry-submit-frame"
         >
           <div className="grid gap-6 sm:grid-cols-2">
             <Field label="First Name" error={fieldErrors.first_name}>
@@ -296,6 +287,12 @@ export function InquiryForm({
             )}
           </Button>
         </form>
+        <iframe
+          className="hidden"
+          name="inquiry-submit-frame"
+          title="Inquiry submit frame"
+          onLoad={onNativeSubmitComplete}
+        />
       </CardContent>
     </Card>
   );
