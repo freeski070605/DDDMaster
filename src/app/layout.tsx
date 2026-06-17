@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
-import Script from "next/script";
 
+import { ExternalTrackingScript } from "@/components/site/external-tracking-script";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { StickyCta } from "@/components/site/sticky-cta";
@@ -68,12 +68,7 @@ export default async function RootLayout({
           />
           <StickyCta />
         </div>
-        <Script
-          id="leadconnector-external-tracking"
-          src="https://link.msgsndr.com/js/external-tracking.js"
-          data-tracking-id="tk_c3a113c684684950971185e76007669e"
-          strategy="afterInteractive"
-        />
+        <ExternalTrackingScript />
       </body>
     </html>
   );
