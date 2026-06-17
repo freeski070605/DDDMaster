@@ -42,7 +42,7 @@ export function ServiceCard({
         </p>
         <div className="flex items-center justify-between gap-4 pt-2">
           <span className="text-sm font-medium text-[color:var(--foreground)]">
-            Starting at {formatCurrency(startingPrice)}
+            {startingPrice > 0 ? `Starting at ${formatCurrency(startingPrice)}` : "Custom quote"}
           </span>
           <Link
             href={`/services/${slug}`}

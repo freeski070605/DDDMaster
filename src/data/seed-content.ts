@@ -185,141 +185,78 @@ export const fallbackSiteSettings = {
 
 export const fallbackServices = [
   {
-    slug: "weddings",
-    title: "Weddings",
-    category: "Wedding",
-    description:
-      "Full-service wedding decor with romantic installations, ceremony styling, sweetheart table designs, and guest-centered details that feel timeless in photos.",
-    shortDescription:
-      "Editorial wedding styling with layered florals, candlelight, statement focal points, and refined room design.",
-    startingPrice: 3500,
-    idealFor: "Couples hosting classic, modern, or intimate weddings with a strong visual point of view.",
-    includes: [
-      "Design consultation and mood direction",
-      "Ceremony focal styling",
-      "Reception backdrop or sweetheart display",
-      "Table styling guidance and decor sourcing",
-      "Setup and post-event breakdown",
-    ],
-    image: "/images/events/IMG_0822-2.jpg",
-    featured: true,
-  },
-  {
-    slug: "birthdays",
-    title: "Birthdays",
-    category: "Birthday",
-    description:
-      "Luxury birthday decor for milestone dinners, surprise parties, and unforgettable celebrations with polished custom details.",
-    shortDescription:
-      "Statement birthday styling with personalized signage, focal installs, and guest-ready photo moments.",
-    startingPrice: 1200,
-    idealFor: "Hosts planning milestone birthdays, luxe dinners, and elevated celebration suites.",
-    includes: [
-      "Theme refinement and custom palette",
-      "Backdrop styling",
-      "Balloon and floral accent options",
-      "Cake area or welcome moment styling",
-      "Setup and cleanup coordination",
-    ],
-    image: "/images/events/IMG_0509-2.jpg",
-    featured: true,
-  },
-  {
-    slug: "baby-showers",
-    title: "Baby Showers",
-    category: "Baby Shower",
-    description:
-      "Warm, sophisticated shower styling designed around meaningful details, soft textures, and polished guest experiences.",
-    shortDescription:
-      "Refined baby shower decor with luxe softness, custom focal pieces, and cohesive table styling.",
-    startingPrice: 1400,
-    idealFor: "Families who want a heartfelt celebration with elegant visuals and thoughtful finishing details.",
-    includes: [
-      "Welcome display styling",
-      "Backdrop or dessert focal point",
-      "Tabletop decor accents",
-      "Signage recommendations",
-      "Installation and breakdown",
-    ],
-    image: "/images/events/IMG_0808-2.jpg",
-    featured: true,
-  },
-  {
-    slug: "bridal-showers",
-    title: "Bridal Showers",
-    category: "Bridal Shower",
-    description:
-      "Chic bridal event styling with soft romance, premium textures, and elevated moments that honor the bride beautifully.",
-    shortDescription:
-      "Polished bridal shower decor with feminine detail, intentional tablescapes, and memorable focal styling.",
-    startingPrice: 1350,
-    idealFor: "Brides and hosts planning an elegant gathering with a graceful, photo-forward look.",
-    includes: [
-      "Styled welcome moment",
-      "Dessert, gift, or champagne focal styling",
-      "Custom color story",
-      "Decor sourcing and styling plan",
-      "Setup and breakdown",
-    ],
-    image: "/images/events/IMG_0822-2.jpg",
-    featured: false,
-  },
-  {
-    slug: "graduations",
-    title: "Graduations",
-    category: "Graduation",
-    description:
-      "Celebration decor that honors major accomplishments with custom visuals, school-inspired details, and polished guest spaces.",
-    shortDescription:
-      "Elevated graduation decor for family celebrations, open houses, and banquet events.",
-    startingPrice: 1100,
-    idealFor: "Graduates and families who want a personalized setup that feels elevated rather than themed.",
-    includes: [
-      "Backdrop or entrance statement piece",
-      "Custom signage",
-      "Themed accent styling",
-      "Photo area setup",
-      "Setup and breakdown service",
-    ],
-    image: "/images/events/IMG_0509-2.jpg",
-    featured: false,
-  },
-  {
-    slug: "corporate-events",
-    title: "Corporate Events",
-    category: "Corporate Event",
-    description:
-      "Professional event decor for brand launches, holiday experiences, appreciation dinners, and executive gatherings.",
-    shortDescription:
-      "Brand-conscious event design that balances polish, atmosphere, and guest experience.",
-    startingPrice: 2500,
-    idealFor: "Businesses, community organizations, and teams planning polished, guest-facing events.",
-    includes: [
-      "Branded design direction",
-      "Stage or photo moment styling",
-      "Lounge and table decor accents",
-      "Venue walkthrough coordination",
-      "Professional install and strike",
-    ],
-    image: "/images/events/IMG_0808-2.jpg",
-    featured: false,
-  },
-  {
-    slug: "custom-styling",
-    title: "Custom Decor and Luxury Styling",
+    slug: "draping",
+    title: "Draping",
     category: "Custom Styling",
     description:
-      "Tailored concept development for clients who want a one-of-one design story with layered textures, premium materials, and a dramatic sense of reveal.",
+      "Soft, polished draping for backdrops, entry moments, ceremony spaces, photo areas, and room transformations that need a more elevated finish.",
     shortDescription:
-      "Fully customized decor experiences for clients who want something signature, memorable, and design-led.",
-    startingPrice: 1800,
-    idealFor: "Clients looking for bespoke concepts, high-touch guidance, and a strong statement piece.",
+      "Elegant draping for backdrops, entrances, focal walls, and room transformations.",
+    startingPrice: 0,
+    idealFor: "Clients who want to soften a venue, frame a focal area, or create a polished photo-ready backdrop.",
     includes: [
-      "Creative direction and concept development",
-      "Custom sourcing recommendations",
-      "Premium focal styling",
-      "Personalized signage options",
-      "White-glove setup and breakdown",
+      "Draping design consultation",
+      "Fabric color and placement recommendations",
+      "Backdrop, entry, or focal area installation",
+      "Setup and breakdown coordination",
+    ],
+    image: "/images/events/IMG_0822-2.jpg",
+    featured: true,
+  },
+  {
+    slug: "furniture-rentals",
+    title: "Furniture Rentals",
+    category: "Custom Styling",
+    description:
+      "Statement furniture rentals for lounge moments, sweetheart seating, guest photo areas, and styled celebration setups.",
+    shortDescription:
+      "Furniture rentals for lounge areas, statement seating, and styled focal moments.",
+    startingPrice: 0,
+    idealFor: "Hosts who need statement seating, lounge pieces, or rental accents that complete the event design.",
+    includes: [
+      "Furniture selection guidance",
+      "Rental coordination",
+      "Delivery and placement planning",
+      "Pickup and breakdown coordination",
+    ],
+    image: "/images/events/IMG_0509-2.jpg",
+    featured: true,
+  },
+  {
+    slug: "prop-rentals",
+    title: "Prop Rentals",
+    category: "Custom Styling",
+    description:
+      "Decor prop rentals for themed displays, dessert tables, welcome areas, photo moments, and custom celebration styling.",
+    shortDescription:
+      "Decor prop rentals for themed displays, dessert tables, and photo-ready setups.",
+    startingPrice: 0,
+    idealFor: "Clients building a styled moment who need the right props, accents, and visual details.",
+    includes: [
+      "Prop selection support",
+      "Display styling recommendations",
+      "Rental preparation",
+      "Return and breakdown coordination",
+    ],
+    image: "/images/events/IMG_0808-2.jpg",
+    featured: true,
+  },
+  {
+    slug: "party-in-a-bag",
+    title: "Party in a Bag",
+    category: "Custom Styling",
+    description:
+      "A ready-to-style party package with coordinated printed and decorative details such as chip bags, menu cards, and matching celebration pieces.",
+    shortDescription:
+      "Coordinated party details including chip bags, menu cards, and matching event pieces.",
+    startingPrice: 0,
+    idealFor: "Hosts who want coordinated party details prepared together in one easy package.",
+    includes: [
+      "Custom theme direction",
+      "Chip bags",
+      "Menu cards",
+      "Coordinated printed party details",
+      "Packaged party-ready materials",
     ],
     image: "/images/events/IMG_0822-2.jpg",
     featured: true,

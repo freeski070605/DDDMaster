@@ -59,7 +59,9 @@ export default async function ServiceDetailPage({
                 Starting investment
               </p>
               <p className="mt-4 text-4xl font-semibold text-[color:var(--foreground)]">
-                {formatCurrency(service.startingPrice)}
+                {service.startingPrice > 0
+                  ? formatCurrency(service.startingPrice)
+                  : "Custom quote"}
               </p>
               <p className="mt-6 text-sm leading-7 text-[color:var(--muted-foreground)]">
                 Ideal for: {service.idealFor}

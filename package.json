@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "tsx --test src/**/*.test.ts",
-    "seed": "tsx --env-file=.env.local scripts/seed.ts"
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "sync:services": "tsx --env-file=.env.local scripts/sync-services.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
