@@ -20,6 +20,11 @@ const inquirySchema = new Schema(
     servicesNeeded: [{ type: String, required: true }],
     inspirationImages: [{ type: String }],
     marketingConsent: { type: Boolean, default: false },
+    source: { type: String, default: "Divine Decor Website" },
+    submittedPagePath: { type: String, default: "/inquire" },
+    submittedFormName: { type: String, default: "Event Inquiry Form" },
+    internalSavedStatus: { type: String, default: "saved" },
+    externalTrackingMode: { type: String, default: "native_form_tracking" },
     consultationSlotId: {
       type: Schema.Types.ObjectId,
       ref: "ConsultationAvailability",

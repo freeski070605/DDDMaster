@@ -1,7 +1,7 @@
-import Script from "next/script";
-
+import { InquiryForm } from "@/components/forms/inquiry-form";
 import { SectionHeading } from "@/components/site/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
+import { inquiryServiceOptions } from "@/data/seed-content";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -11,7 +11,20 @@ export const metadata = createPageMetadata({
   path: "/inquire",
 });
 
-export default function InquirePage() {
+export default async function InquirePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ error?: string }>;
+}) {
+  const services = inquiryServiceOptions.map((title) => ({ title }));
+  const params = await searchParams;
+  const errorMessage =
+    params?.error === "save"
+      ? "We could not save your inquiry. Please try again."
+      : params?.error === "invalid"
+        ? "Please review the form and complete the required fields."
+        : "";
+
   return (
     <div className="section">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
@@ -27,41 +40,22 @@ export default function InquirePage() {
                 What to expect
               </p>
               <ul className="mt-4 space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
-                <li>• Immediate inquiry confirmation</li>
-                <li>• Follow-up after we review your event goals and date</li>
-                <li>• Consultation scheduling based on availability</li>
-                <li>• A clear recommendation for scope and investment</li>
+                <li>Immediate inquiry confirmation</li>
+                <li>Follow-up after we review your event goals and date</li>
+                <li>Consultation scheduling based on availability</li>
+                <li>A clear recommendation for scope and investment</li>
               </ul>
             </CardContent>
           </Card>
         </div>
-        <Card>
-          <CardContent className="overflow-hidden p-0">
-            <iframe
-              src="https://api.leadconnectorhq.com/widget/form/FEWk0e24K6bxe3nchsxy"
-              style={{
-                width: "100%",
-                height: "1533px",
-                border: "none",
-                borderRadius: "3px",
-              }}
-              id="inline-FEWk0e24K6bxe3nchsxy"
-              data-layout="{'id':'INLINE'}"
-              data-trigger-type="alwaysShow"
-              data-trigger-value=""
-              data-activation-type="alwaysActivated"
-              data-activation-value=""
-              data-deactivation-type="neverDeactivate"
-              data-deactivation-value=""
-              data-form-name="Event Inquiry Form"
-              data-height="1533"
-              data-layout-iframe-id="inline-FEWk0e24K6bxe3nchsxy"
-              data-form-id="FEWk0e24K6bxe3nchsxy"
-              title="Event Inquiry Form"
-            />
-          </CardContent>
-        </Card>
-        <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
+        <div className="space-y-4">
+          {errorMessage ? (
+            <div className="rounded-[1.5rem] border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          ) : null}
+          <InquiryForm services={services} />
+        </div>
       </div>
     </div>
   );

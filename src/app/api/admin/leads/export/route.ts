@@ -40,6 +40,11 @@ export async function GET() {
     "Strike / Breakdown Time",
     "Services Interested In",
     "Marketing Consent",
+    "Internal Saved Status",
+    "External Tracking Mode",
+    "Submitted Page",
+    "Submitted Form",
+    "Source",
     "Status",
     "Created At",
   ];
@@ -60,6 +65,11 @@ export async function GET() {
       item.strikeTime ?? "",
       item.servicesNeeded?.join("; ") ?? "",
       item.marketingConsent ? "Yes" : "No",
+      item.internalSavedStatus ?? "saved",
+      item.externalTrackingMode ?? "native_form_tracking",
+      item.submittedPagePath ?? "/inquire",
+      item.submittedFormName ?? "Event Inquiry Form",
+      item.source ?? "Divine Decor Website",
       item.status,
       new Date(item.createdAt).toISOString(),
     ]

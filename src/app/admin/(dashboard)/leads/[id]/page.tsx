@@ -50,6 +50,14 @@ export default async function AdminLeadDetailPage({
               label="Marketing consent"
               value={lead.marketingConsent ? "Consented" : "Not selected"}
             />
+            <Info label="Internal saved status" value={lead.internalSavedStatus || "saved"} />
+            <Info
+              label="External tracking mode"
+              value={lead.externalTrackingMode || "native_form_tracking"}
+            />
+            <Info label="Submitted page" value={lead.submittedPagePath || "/inquire"} />
+            <Info label="Submitted form" value={lead.submittedFormName || "Event Inquiry Form"} />
+            <Info label="Source" value={lead.source || "Divine Decor Website"} />
           </div>
           <div className="mt-6 rounded-[1.5rem] bg-white/75 p-5 ring-1 ring-[color:var(--border)]">
             <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
