@@ -38,7 +38,7 @@ export default function InquirePage() {
         <Card>
           <CardContent className="overflow-hidden p-0">
             <iframe
-              src="https://www.divinedecor.design/widget/form/FEWk0e24K6bxe3nchsxy"
+              src="https://api.leadconnectorhq.com/widget/form/FEWk0e24K6bxe3nchsxy"
               style={{
                 width: "100%",
                 height: "1533px",
@@ -61,7 +61,7 @@ export default function InquirePage() {
             />
           </CardContent>
         </Card>
-        <Script src="/js/form_embed.js" strategy="afterInteractive" />
+        <Script src="https://link.msgsndr.com/js/form_embed.js" strategy="afterInteractive" />
       </div>
     </div>
   );
