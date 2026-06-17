@@ -44,7 +44,7 @@ export default function InquirePage() {
             </div>
             <div className="h-[1881px] w-full bg-white">
               <iframe
-                src="https://www.divinedecor.design/widget/form/6xA2Z6YDHU2YM26MEREd"
+                src="https://api.leadconnectorhq.com/widget/form/6xA2Z6YDHU2YM26MEREd"
                 style={{ width: "100%", height: "100%", border: "none", borderRadius: 3 }}
                 id="inline-6xA2Z6YDHU2YM26MEREd"
                 data-layout="{'id':'INLINE'}"
@@ -64,7 +64,7 @@ export default function InquirePage() {
           </CardContent>
         </Card>
         <Script
-          src="https://www.divinedecor.design/js/form_embed.js"
+          src="https://link.msgsndr.com/js/form_embed.js"
           strategy="afterInteractive"
         />
       </div>
