@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { LeadConnectorSubmitDelay } from "@/components/forms/leadconnector-submit-delay";
 import { LeadConnectorTrackingScript } from "@/components/site/leadconnector-tracking-script";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,9 @@ export default function CrmFormTestPage() {
       <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
         <Card>
           <CardContent>
+            <LeadConnectorSubmitDelay formId="crm-form-test-form" />
             <form
+              id="crm-form-test-form"
               action="/api/inquiries"
               className="space-y-5"
               data-form-id="FEWk0e24K6bxe3nchsxy"

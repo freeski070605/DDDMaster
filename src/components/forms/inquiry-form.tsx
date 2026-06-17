@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { LeadConnectorSubmitDelay } from "@/components/forms/leadconnector-submit-delay";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ export function InquiryForm({
   return (
     <Card>
       <CardContent>
+        <LeadConnectorSubmitDelay formId="event-inquiry-form" />
         <form
           id="event-inquiry-form"
           name={formName}
