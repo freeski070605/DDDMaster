@@ -1,19 +1,6 @@
-"use client";
-
 import Script from "next/script";
-import { usePathname } from "next/navigation";
 
-export function ExternalTrackingScript() {
-  const pathname = usePathname();
-
-  if (
-    pathname.startsWith("/admin") ||
-    pathname === "/inquire" ||
-    pathname === "/crm-form-test"
-  ) {
-    return null;
-  }
-
+export function LeadConnectorTrackingScript() {
   return (
     <Script
       id="leadconnector-external-tracking"

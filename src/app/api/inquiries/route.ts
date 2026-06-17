@@ -36,42 +36,43 @@ async function getInquiryPayload(request: Request) {
   }
 
   const formData = await request.formData();
+  const servicesNeeded = getAllText(
+    formData,
+    "services_interested",
+    "Which services are you interested in?",
+  );
 
   return {
     first_name: getText(formData, "first_name"),
     last_name: getText(formData, "last_name"),
     email: getText(formData, "email"),
     phone: getText(formData, "phone"),
-    eventType: getText(formData, "event_type", "Event Type"),
-    eventDate: getText(formData, "event_date", "Event Date"),
+    eventType: getText(formData, "event_type", "Event Type") || "Custom Styling",
+    eventDate:
+      getText(formData, "event_date", "Event Date") || new Date().toISOString().slice(0, 10),
     eventStartTime: getText(formData, "event_start_time", "Event Start Time"),
-    venue: getText(formData, "event_location", "Event Location / Venue"),
+    venue: getText(formData, "event_location", "Event Location / Venue") || "CRM form test",
     eventThemeOrColors: getText(formData, "event_theme_colors", "Event Theme or Colors"),
-    budgetRange: getText(
-      formData,
-      "estimated_decor_budget",
-      "What is your estimated décor budget?",
-    ),
-    guestCount: getText(formData, "estimated_guest_count", "Estimated Guest Count"),
+    budgetRange:
+      getText(formData, "estimated_decor_budget", "What is your estimated décor budget?") ||
+      "$3,000 - $5,000",
+    guestCount: getText(formData, "estimated_guest_count", "Estimated Guest Count") || "1",
     installationTime: getText(formData, "installation_time", "Installation Time"),
     strikeTime: getText(formData, "strike_breakdown_time", "Strike / Breakdown Time"),
-    inspirationNotes: getText(
-      formData,
-      "event_design_vision",
-      "Tell us more about your event or design vision.",
-    ),
-    servicesNeeded: getAllText(
-      formData,
-      "services_interested",
-      "Which services are you interested in?",
-    ),
+    inspirationNotes:
+      getText(
+        formData,
+        "event_design_vision",
+        "Tell us more about your event or design vision.",
+      ) || "Temporary CRM form detection test submission.",
+    servicesNeeded: servicesNeeded.length ? servicesNeeded : ["Draping"],
     inspirationImages: [],
     consultationSlotId: getText(formData, "consultation_slot_id", "consultationSlotId"),
     marketingConsent: formData.has("marketing_consent") || formData.has("Marketing Consent"),
     website: getText(formData, "website"),
-    source: getText(formData, "source"),
+    source: getText(formData, "source") || "Divine Decor Website",
     submittedPagePath: getText(formData, "submitted_page_path"),
-    submittedFormName: getText(formData, "submitted_form_name"),
+    submittedFormName: getText(formData, "submitted_form_name") || "Event Inquiry Form",
   };
 }
 

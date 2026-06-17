@@ -1,4 +1,5 @@
 import { InquiryForm } from "@/components/forms/inquiry-form";
+import { LeadConnectorTrackingScript } from "@/components/site/leadconnector-tracking-script";
 import { SectionHeading } from "@/components/site/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
 import { inquiryServiceOptions } from "@/data/seed-content";
@@ -27,6 +28,7 @@ export default async function InquirePage({
 
   return (
     <div className="section">
+      <LeadConnectorTrackingScript />
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8">
         <div className="space-y-6">
           <SectionHeading
