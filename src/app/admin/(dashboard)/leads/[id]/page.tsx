@@ -55,10 +55,50 @@ export default async function AdminLeadDetailPage({
               label="External tracking mode"
               value={lead.externalTrackingMode || "native_form_tracking"}
             />
+            <Info label="CRM sync status" value={lead.crmSyncStatus || "not_attempted"} />
+            <Info label="CRM contact ID" value={lead.crmContactId || "Not synced"} />
+            <Info
+              label="CRM tag sync status"
+              value={lead.crmTagSyncStatus || "not_attempted"}
+            />
+            <Info
+              label="CRM opportunity status"
+              value={lead.crmOpportunitySyncStatus || "not_attempted"}
+            />
+            <Info label="CRM opportunity ID" value={lead.crmOpportunityId || "Not synced"} />
+            <Info label="CRM pipeline" value={lead.crmPipelineName || "Not resolved"} />
+            <Info label="CRM pipeline ID" value={lead.crmPipelineId || "Not resolved"} />
+            <Info label="CRM stage" value={lead.crmPipelineStageName || "Not resolved"} />
+            <Info label="CRM stage ID" value={lead.crmPipelineStageId || "Not resolved"} />
             <Info label="Submitted page" value={lead.submittedPagePath || "/inquire"} />
             <Info label="Submitted form" value={lead.submittedFormName || "Event Inquiry Form"} />
             <Info label="Source" value={lead.source || "Divine Decor Website"} />
           </div>
+          {lead.crmTagsAdded?.length ? (
+            <div className="mt-6 rounded-[1.5rem] bg-white/75 p-5 ring-1 ring-[color:var(--border)]">
+              <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+                CRM tags added
+              </p>
+              <p className="mt-3 text-sm leading-7 text-[color:var(--foreground)]">
+                {lead.crmTagsAdded.join(", ")}
+              </p>
+            </div>
+          ) : null}
+          {lead.crmSyncWarnings?.length || lead.crmSyncError ? (
+            <div className="mt-6 rounded-[1.5rem] bg-red-50 p-5 ring-1 ring-red-200">
+              <p className="text-sm uppercase tracking-[0.18em] text-red-700">
+                CRM sync diagnostics
+              </p>
+              {lead.crmSyncError ? (
+                <p className="mt-3 text-sm leading-7 text-red-700">{lead.crmSyncError}</p>
+              ) : null}
+              {lead.crmSyncWarnings?.length ? (
+                <p className="mt-3 text-sm leading-7 text-red-700">
+                  {lead.crmSyncWarnings.join(" ")}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <div className="mt-6 rounded-[1.5rem] bg-white/75 p-5 ring-1 ring-[color:var(--border)]">
             <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
               Services interested in

@@ -40,6 +40,22 @@ export const env = {
   instagramUrl:
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ??
     "https://www.instagram.com/divinedesigndecor",
+  leadConnectorEnabled: process.env.LEADCONNECTOR_ENABLED === "true",
+  leadConnectorApiBase:
+    process.env.LEADCONNECTOR_API_BASE ?? "https://services.leadconnectorhq.com",
+  leadConnectorApiVersion: process.env.LEADCONNECTOR_API_VERSION ?? "2023-02-21",
+  leadConnectorLocationId: process.env.LEADCONNECTOR_LOCATION_ID,
+  leadConnectorPrivateIntegrationToken:
+    process.env.LEADCONNECTOR_PRIVATE_INTEGRATION_TOKEN,
+  leadConnectorPipelineName:
+    process.env.LEADCONNECTOR_PIPELINE_NAME ?? "Client Revenue Pipeline",
+  leadConnectorDefaultStageName:
+    process.env.LEADCONNECTOR_DEFAULT_STAGE_NAME ?? "New Lead",
+  leadConnectorPipelineId: process.env.LEADCONNECTOR_PIPELINE_ID,
+  leadConnectorPipelineStageId: process.env.LEADCONNECTOR_PIPELINE_STAGE_ID,
+  leadConnectorTriggerTags:
+    process.env.LEADCONNECTOR_TRIGGER_TAGS ??
+    "website-inquiry,event-inquiry,divine-decor,new-lead",
 };
 
 export function getAbsoluteUrl(path = "/") {
