@@ -1,6 +1,9 @@
+import dns from "node:dns";
 import mongoose from "mongoose";
 
 import { env, isDatabaseConfigured } from "@/lib/env";
+
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 declare global {
   var mongooseCache:
