@@ -10,57 +10,64 @@ import { ConsultationAvailabilityModel, InquiryModel } from "@/models";
 export async function POST(request: Request) {
   try {
     const payload = inquirySchema.parse(await request.json());
+    const fullName = `${payload.firstName} ${payload.lastName}`.trim();
 
     if (payload.website) {
       return NextResponse.json({ success: true });
     }
 
-    if (!isDatabaseConfigured()) {
-      return NextResponse.json({
-        success: true,
-        demoMode: true,
+    let inquiryId: string | null = null;
+
+    if (isDatabaseConfigured()) {
+      try {
+        await connectToDatabase();
+
+        let consultationSlotId = null;
+
+        if (payload.consultationSlotId && isValidObjectId(payload.consultationSlotId)) {
+          const slot = await ConsultationAvailabilityModel.findOneAndUpdate(
+            {
+              _id: payload.consultationSlotId,
+              isBooked: false,
+            },
+            {
+              $set: {
+                isBooked: true,
+                bookingName: fullName,
+              },
+            },
+            { new: true },
+          );
+
+          consultationSlotId = slot?._id ?? null;
+        }
+
+        const inquiry = await InquiryModel.create({
+          ...payload,
+          fullName,
+          eventDate: new Date(payload.eventDate),
+          consultationSlotId,
+        });
+
+        inquiryId = inquiry.id;
+      } catch (databaseError) {
+        console.error("Unable to save inquiry locally.", databaseError);
+      }
+    }
+
+    try {
+      await sendInquiryEmails({
+        fullName,
+        email: payload.email,
+        eventType: payload.eventType,
+        eventDate: new Date(payload.eventDate).toDateString(),
+        venue: payload.venue,
       });
+    } catch (emailError) {
+      console.error("Unable to send inquiry email.", emailError);
     }
 
-    await connectToDatabase();
-
-    const fullName = `${payload.firstName} ${payload.lastName}`.trim();
-    let consultationSlotId = null;
-
-    if (payload.consultationSlotId && isValidObjectId(payload.consultationSlotId)) {
-      const slot = await ConsultationAvailabilityModel.findOneAndUpdate(
-        {
-          _id: payload.consultationSlotId,
-          isBooked: false,
-        },
-        {
-          $set: {
-            isBooked: true,
-            bookingName: fullName,
-          },
-        },
-        { new: true },
-      );
-
-      consultationSlotId = slot?._id ?? null;
-    }
-
-    const inquiry = await InquiryModel.create({
-      ...payload,
-      fullName,
-      eventDate: new Date(payload.eventDate),
-      consultationSlotId,
-    });
-
-    await sendInquiryEmails({
-      fullName: inquiry.fullName,
-      email: inquiry.email,
-      eventType: inquiry.eventType,
-      eventDate: inquiry.eventDate.toDateString(),
-      venue: inquiry.venue,
-    });
-
-    return NextResponse.json({ success: true, id: inquiry.id });
+    return NextResponse.json({ success: true, id: inquiryId });
   } catch (error) {
     return NextResponse.json(
       {

@@ -77,6 +77,10 @@ export function InquiryForm({
     }
   }
 
+  function onInvalid() {
+    setSubmitError("Please complete the required fields before submitting.");
+  }
+
   if (submitted) {
     return (
       <Card>
@@ -106,7 +110,7 @@ export function InquiryForm({
           id="event-inquiry-form"
           name="Event Inquiry Form"
           className="space-y-6"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, onInvalid)}
         >
           <div className="grid gap-6 sm:grid-cols-2">
             <Field label="First Name" error={form.formState.errors.firstName?.message}>
