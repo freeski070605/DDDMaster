@@ -175,14 +175,17 @@ export function InquiryForm({
                   >
                     <input
                       type="checkbox"
+                      name="servicesNeeded"
+                      value={service.title}
                       checked={checked}
                       onChange={(event) => {
                         const current = form.getValues("servicesNeeded");
+                        const serviceTitle = event.target.value;
                         form.setValue(
                           "servicesNeeded",
                           event.target.checked
-                            ? [...current, service.title]
-                            : current.filter((item) => item !== service.title),
+                            ? [...current, serviceTitle]
+                            : current.filter((item) => item !== serviceTitle),
                           { shouldValidate: true },
                         );
                       }}
