@@ -1,7 +1,8 @@
 import { InquiryForm } from "@/components/forms/inquiry-form";
 import { SectionHeading } from "@/components/site/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
-import { getAvailableConsultationSlots, getServices } from "@/lib/cms";
+import { inquiryServiceOptions } from "@/data/seed-content";
+import { getAvailableConsultationSlots } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/seo";
 
 export const metadata = createPageMetadata({
@@ -12,10 +13,8 @@ export const metadata = createPageMetadata({
 });
 
 export default async function InquirePage() {
-  const [services, slots] = await Promise.all([
-    getServices(),
-    getAvailableConsultationSlots(),
-  ]);
+  const slots = await getAvailableConsultationSlots();
+  const services = inquiryServiceOptions.map((title) => ({ title }));
 
   return (
     <div className="section">

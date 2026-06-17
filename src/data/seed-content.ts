@@ -20,6 +20,13 @@ export const budgetRanges = [
   "$8,500+",
 ] as const;
 
+export const inquiryServiceOptions = [
+  "Draping",
+  "Furniture Rentals",
+  "Prop Rentals",
+  "Party in a Bag",
+] as const;
+
 export const serviceAreas: ServiceArea[] = [
   {
     slug: "philadelphia",
