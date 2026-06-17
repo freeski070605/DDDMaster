@@ -55,17 +55,15 @@ export async function POST(request: Request) {
       }
     }
 
-    try {
-      await sendInquiryEmails({
+    void sendInquiryEmails({
         fullName,
         email: payload.email,
         eventType: payload.eventType,
         eventDate: new Date(payload.eventDate).toDateString(),
         venue: payload.venue,
-      });
-    } catch (emailError) {
+    }).catch((emailError) => {
       console.error("Unable to send inquiry email.", emailError);
-    }
+    });
 
     return NextResponse.json({ success: true, id: inquiryId });
   } catch (error) {
