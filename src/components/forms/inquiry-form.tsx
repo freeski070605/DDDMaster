@@ -104,7 +104,12 @@ export function InquiryForm({
   return (
     <Card>
       <CardContent>
-        <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          id="event-inquiry-form"
+          name="event_inquiry"
+          className="space-y-6"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="grid gap-6 sm:grid-cols-2">
             <Field label="Full name" error={form.formState.errors.fullName?.message}>
               <Input {...form.register("fullName")} />
