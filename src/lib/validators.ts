@@ -36,18 +36,24 @@ export const loginSchema = z.object({
 });
 
 export const inquirySchema = z.object({
-  fullName: z.string().min(2, "Please enter your full name."),
+  firstName: z.string().min(1, "Please enter your first name."),
+  lastName: z.string().min(1, "Please enter your last name."),
   email: z.email(),
   phone: z.string().min(10, "Please include a valid phone number."),
   eventType: z.enum(eventTypes),
   eventDate: z.string().min(1, "Please select your event date."),
+  eventStartTime: z.string().optional().default(""),
   venue: z.string().min(2, "Please add a venue or location."),
+  eventThemeOrColors: z.string().optional().default(""),
   budgetRange: z.enum(budgetRanges),
   guestCount: z.coerce.number().int().min(1).max(5000),
+  installationTime: z.string().optional().default(""),
+  strikeTime: z.string().optional().default(""),
   inspirationNotes: z.string().min(20, "Share a bit more about your vision."),
   servicesNeeded: z.array(z.string()).min(1, "Select at least one service."),
   inspirationImages: z.array(z.string().url()).max(5).default([]),
   consultationSlotId: z.string().optional().or(z.literal("")),
+  marketingConsent: z.boolean().default(false),
   website: z.string().max(0).optional().default(""),
 });
 

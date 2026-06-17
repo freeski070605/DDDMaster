@@ -6,27 +6,20 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { ImageUploadField } from "@/components/forms/image-upload-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { budgetRanges } from "@/data/seed-content";
+import { budgetRanges, eventTypes } from "@/data/seed-content";
 import { inquirySchema } from "@/lib/validators";
 
 type InquiryFormValues = z.input<typeof inquirySchema>;
 
 export function InquiryForm({
   services,
-  consultationSlots,
 }: {
   services: ReadonlyArray<{ title: string }>;
-  consultationSlots: ReadonlyArray<{
-    _id: string | { toString(): string };
-    label: string;
-    start?: string | Date;
-  }>;
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -34,24 +27,29 @@ export function InquiryForm({
   const form = useForm<InquiryFormValues>({
     resolver: zodResolver(inquirySchema),
     defaultValues: {
-      fullName: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       eventType: "Wedding",
       eventDate: "",
+      eventStartTime: "",
       venue: "",
+      eventThemeOrColors: "",
       budgetRange: "$3,000 - $5,000",
       guestCount: 50,
+      installationTime: "",
+      strikeTime: "",
       inspirationNotes: "",
       servicesNeeded: [],
       inspirationImages: [],
       consultationSlotId: "",
+      marketingConsent: false,
       website: "",
     },
   });
 
   const submitting = form.formState.isSubmitting;
-  const inspirationImages = form.watch("inspirationImages") ?? [];
   const selectedServices = form.watch("servicesNeeded") ?? [];
 
   async function onSubmit(values: InquiryFormValues) {
@@ -106,64 +104,68 @@ export function InquiryForm({
       <CardContent>
         <form
           id="event-inquiry-form"
-          name="event_inquiry"
+          name="Event Inquiry Form"
           className="space-y-6"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field label="Full name" error={form.formState.errors.fullName?.message}>
-              <Input {...form.register("fullName")} />
+            <Field label="First Name" error={form.formState.errors.firstName?.message}>
+              <Input autoComplete="given-name" {...form.register("firstName")} />
+            </Field>
+            <Field label="Last Name" error={form.formState.errors.lastName?.message}>
+              <Input autoComplete="family-name" {...form.register("lastName")} />
             </Field>
             <Field label="Email" error={form.formState.errors.email?.message}>
-              <Input type="email" {...form.register("email")} />
+              <Input type="email" autoComplete="email" {...form.register("email")} />
             </Field>
             <Field label="Phone" error={form.formState.errors.phone?.message}>
-              <Input type="tel" {...form.register("phone")} />
+              <Input type="tel" autoComplete="tel" {...form.register("phone")} />
             </Field>
-            <Field label="Event type" error={form.formState.errors.eventType?.message}>
+            <Field label="Event Date" error={form.formState.errors.eventDate?.message}>
+              <Input type="date" {...form.register("eventDate")} />
+            </Field>
+            <Field label="Event Type" error={form.formState.errors.eventType?.message}>
               <select
                 className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
                 {...form.register("eventType")}
               >
-                {[
-                  "Wedding",
-                  "Birthday",
-                  "Baby Shower",
-                  "Bridal Shower",
-                  "Graduation",
-                  "Corporate Event",
-                  "Custom Styling",
-                ].map((item) => (
+                {eventTypes.map((item) => (
                   <option key={item} value={item}>
                     {item}
                   </option>
                 ))}
               </select>
             </Field>
-            <Field label="Event date" error={form.formState.errors.eventDate?.message}>
-              <Input type="date" {...form.register("eventDate")} />
-            </Field>
-            <Field label="Venue or location" error={form.formState.errors.venue?.message}>
+            <Field label="Event Location / Venue" error={form.formState.errors.venue?.message}>
               <Input {...form.register("venue")} />
             </Field>
-            <Field label="Budget range" error={form.formState.errors.budgetRange?.message}>
-              <select
-                className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
-                {...form.register("budgetRange")}
-              >
-                {budgetRanges.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
+            <Field label="Event Start Time" error={form.formState.errors.eventStartTime?.message}>
+              <Input type="time" {...form.register("eventStartTime")} />
             </Field>
-            <Field label="Guest count" error={form.formState.errors.guestCount?.message}>
+            <Field
+              label="Event Theme or Colors"
+              error={form.formState.errors.eventThemeOrColors?.message}
+            >
+              <Input {...form.register("eventThemeOrColors")} />
+            </Field>
+            <Field label="Estimated Guest Count" error={form.formState.errors.guestCount?.message}>
               <Input type="number" min={1} {...form.register("guestCount", { valueAsNumber: true })} />
+            </Field>
+            <Field label="Installation Time" error={form.formState.errors.installationTime?.message}>
+              <Input type="time" {...form.register("installationTime")} />
+            </Field>
+            <Field
+              label="Strike / Breakdown Time"
+              error={form.formState.errors.strikeTime?.message}
+            >
+              <Input type="time" {...form.register("strikeTime")} />
             </Field>
           </div>
 
-          <Field label="Services needed" error={form.formState.errors.servicesNeeded?.message}>
+          <Field
+            label="Which services are you interested in?"
+            error={form.formState.errors.servicesNeeded?.message}
+          >
             <div className="grid gap-3 sm:grid-cols-2">
               {services.map((service) => {
                 const checked = selectedServices.includes(service.title);
@@ -198,43 +200,47 @@ export function InquiryForm({
           </Field>
 
           <Field
-            label="Preferred consultation slot"
-            error={form.formState.errors.consultationSlotId?.message}
+            label="What is your estimated décor budget?"
+            error={form.formState.errors.budgetRange?.message}
           >
             <select
               className="flex h-12 w-full rounded-2xl border border-[color:var(--border)] bg-white/80 px-4 text-sm"
-              {...form.register("consultationSlotId")}
+              {...form.register("budgetRange")}
             >
-              <option value="">No preference yet</option>
-              {consultationSlots.map((slot) => (
-                <option key={String(slot._id)} value={String(slot._id)}>
-                  {slot.label}
+              {budgetRanges.map((item) => (
+                <option key={item} value={item}>
+                  {item}
                 </option>
               ))}
             </select>
           </Field>
 
           <Field
-            label="Inspiration notes"
+            label="Tell us more about your event or design vision."
             error={form.formState.errors.inspirationNotes?.message}
           >
             <Textarea
-              placeholder="Tell us about the feeling, colors, venue, focal moments, and any must-haves."
+              placeholder="Share the feeling, colors, venue details, focal moments, and any must-haves."
               {...form.register("inspirationNotes")}
             />
           </Field>
 
-          <Field label="Inspiration images">
-            <ImageUploadField
-              label="Upload inspiration references"
-              value={inspirationImages}
-              onChange={(urls) =>
-                form.setValue("inspirationImages", urls, { shouldValidate: true })
-              }
+          <label className="flex items-start gap-3 rounded-2xl border border-[color:var(--border)] bg-white/70 px-4 py-3 text-sm leading-6 text-[color:var(--muted-foreground)]">
+            <input
+              type="checkbox"
+              className="mt-1"
+              {...form.register("marketingConsent")}
             />
-          </Field>
+            <span>
+              By checking this box, I consent to receive marketing and promotional
+              messages, including special offers, discounts, and product updates, at the
+              phone number provided. Message frequency may vary. Message and data rates
+              may apply. Text HELP for assistance or reply STOP to opt out.
+            </span>
+          </label>
 
           <input type="text" className="hidden" tabIndex={-1} autoComplete="off" {...form.register("website")} />
+          <input type="hidden" {...form.register("consultationSlotId")} />
 
           {submitError ? <p className="text-sm text-red-600">{submitError}</p> : null}
 

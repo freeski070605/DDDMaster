@@ -38,10 +38,26 @@ export default async function AdminLeadDetailPage({
             <Info label="Phone" value={lead.phone} />
             <Info label="Event type" value={lead.eventType} />
             <Info label="Event date" value={new Date(lead.eventDate).toLocaleDateString()} />
+            <Info label="Event start time" value={lead.eventStartTime || "Not provided"} />
             <Info label="Venue" value={lead.venue} />
+            <Info label="Theme or colors" value={lead.eventThemeOrColors || "Not provided"} />
             <Info label="Budget" value={lead.budgetRange} />
             <Info label="Guest count" value={String(lead.guestCount)} />
+            <Info label="Installation time" value={lead.installationTime || "Not provided"} />
+            <Info label="Strike / breakdown" value={lead.strikeTime || "Not provided"} />
             <Info label="Consultation slot" value={consultationSlot} />
+            <Info
+              label="Marketing consent"
+              value={lead.marketingConsent ? "Consented" : "Not selected"}
+            />
+          </div>
+          <div className="mt-6 rounded-[1.5rem] bg-white/75 p-5 ring-1 ring-[color:var(--border)]">
+            <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">
+              Services interested in
+            </p>
+            <p className="mt-3 text-sm leading-7 text-[color:var(--foreground)]">
+              {lead.servicesNeeded?.length ? lead.servicesNeeded.join(", ") : "Not selected"}
+            </p>
           </div>
           <div className="mt-6 rounded-[1.5rem] bg-[color:var(--secondary)]/55 p-5">
             <p className="text-sm uppercase tracking-[0.18em] text-[color:var(--muted-foreground)]">

@@ -24,6 +24,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
+    const fullName = `${payload.firstName} ${payload.lastName}`.trim();
     let consultationSlotId = null;
 
     if (payload.consultationSlotId && isValidObjectId(payload.consultationSlotId)) {
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
         {
           $set: {
             isBooked: true,
-            bookingName: payload.fullName,
+            bookingName: fullName,
           },
         },
         { new: true },
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
 
     const inquiry = await InquiryModel.create({
       ...payload,
+      fullName,
       eventDate: new Date(payload.eventDate),
       consultationSlotId,
     });

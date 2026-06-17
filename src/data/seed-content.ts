@@ -22,9 +22,13 @@ export const budgetRanges = [
 
 export const inquiryServiceOptions = [
   "Draping",
-  "Furniture Rentals",
-  "Prop Rentals",
-  "Party in a Bag",
+  "Balloon Décor",
+  "Floral Design",
+  "Treat Table / Dessert Table",
+  "Custom Signage",
+  "Full Event Design",
+  "Backdrop Setup",
+  "Other",
 ] as const;
 
 export const serviceAreas: ServiceArea[] = [
