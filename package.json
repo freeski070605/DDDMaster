@@ -10,7 +10,8 @@
     "test": "tsx --test src/**/*.test.ts",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "sync:services": "tsx --env-file=.env.local scripts/sync-services.ts",
-    "sync:availability": "tsx --env-file=.env.local scripts/sync-availability.ts"
+    "sync:availability": "tsx --env-file=.env.local scripts/sync-availability.ts",
+    "find:leadconnector-stage": "node scripts/find-leadconnector-stage-id.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

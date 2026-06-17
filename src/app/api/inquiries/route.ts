@@ -4,7 +4,6 @@ import { isValidObjectId } from "mongoose";
 import { sendInquiryEmails } from "@/lib/email";
 import { isDatabaseConfigured } from "@/lib/env";
 import { connectToDatabase } from "@/lib/mongoose";
-import { syncInquiryToLeadConnector } from "@/lib/server/leadconnector";
 import { inquirySchema } from "@/lib/validators";
 import { ConsultationAvailabilityModel, InquiryModel } from "@/models";
 
@@ -143,18 +142,11 @@ export async function POST(request: Request) {
         inquiryId = inquiry.id;
         internalSaveSucceeded = true;
 
-        const crmSyncResult = await syncInquiryToLeadConnector(inquiry.toObject());
-        await InquiryModel.findByIdAndUpdate(inquiry._id, {
-          $set: crmSyncResult,
-        });
-
         console.info("[inquiries] internal save succeeded", {
           inquiryId,
           mode: jsonRequest ? "json" : "native_form",
           submittedPagePath: rawPayload.submittedPagePath || "/inquire",
           submittedFormName: rawPayload.submittedFormName || "Event Inquiry Form",
-          crmSyncStatus: crmSyncResult.crmSyncStatus,
-          crmOpportunitySyncStatus: crmSyncResult.crmOpportunitySyncStatus,
         });
       } catch (databaseError) {
         console.error("[inquiries] internal save failed", databaseError);

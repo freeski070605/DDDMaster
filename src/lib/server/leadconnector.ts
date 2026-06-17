@@ -60,10 +60,6 @@ type LeadConnectorRequestOptions = Omit<RequestInit, "body" | "headers"> & {
 const defaultTags = ["website-inquiry", "event-inquiry", "divine-decor", "new-lead"];
 
 function requireLeadConnectorConfig() {
-  if (!env.leadConnectorEnabled) {
-    throw new Error("LeadConnector sync is disabled.");
-  }
-
   if (!env.leadConnectorPrivateIntegrationToken) {
     throw new Error("LeadConnector private integration token is not configured.");
   }
@@ -112,6 +108,18 @@ function findArray(value: unknown, keys: string[]): unknown[] {
 
     if (Array.isArray(nested)) {
       return nested;
+    }
+
+    if (nested && typeof nested === "object") {
+      const nestedArray = findArray(nested, keys);
+
+      if (nestedArray.length) {
+        return nestedArray;
+      }
+
+      if (key === "pipeline" || key === "stage") {
+        return [nested];
+      }
     }
   }
 
@@ -310,6 +318,76 @@ export async function resolveLeadConnectorPipelineAndStage(): Promise<LeadConnec
     pipelineName: getEntityName(pipeline) || env.leadConnectorPipelineName,
     stageId,
     stageName: getEntityName(stage) || env.leadConnectorDefaultStageName,
+  };
+}
+
+export async function resolvePipelineStageId() {
+  const response = await getLeadConnectorPipelines();
+  const pipelines = findArray(response, ["pipelines", "pipeline", "data"]);
+  const pipeline = pipelines.find((item) => {
+    const pipelineId = getEntityId(item);
+    const pipelineName = getEntityName(item);
+
+    return (
+      pipelineId === env.leadConnectorPipelineId ||
+      normalizeName(pipelineName) === normalizeName(env.leadConnectorPipelineName)
+    );
+  });
+
+  if (!pipeline) {
+    return {
+      ok: false as const,
+      matchedPipeline: null,
+      matchedStage: null,
+      allPipelines: pipelines.map((item) => ({
+        id: getEntityId(item),
+        name: getEntityName(item),
+      })),
+      allStages: [],
+      envLineToSet: "",
+      error: `No pipeline matched ID "${env.leadConnectorPipelineId || "(not set)"}" or name "${env.leadConnectorPipelineName}".`,
+    };
+  }
+
+  const stages = findArray(pipeline, ["stages", "stage"]).map((stage) => ({
+    id: getEntityId(stage),
+    name: getEntityName(stage),
+  }));
+  const matchedStage =
+    stages.find(
+      (stage) => normalizeName(stage.name) === normalizeName(env.leadConnectorDefaultStageName),
+    ) ?? null;
+  const matchedPipeline = {
+    id: getEntityId(pipeline),
+    name: getEntityName(pipeline),
+  };
+
+  if (!matchedStage) {
+    return {
+      ok: false as const,
+      matchedPipeline,
+      matchedStage: null,
+      allPipelines: pipelines.map((item) => ({
+        id: getEntityId(item),
+        name: getEntityName(item),
+      })),
+      allStages: stages,
+      envLineToSet: "",
+      error: `Pipeline matched, but no stage matched "${env.leadConnectorDefaultStageName}".`,
+    };
+  }
+
+  return {
+    ok: true as const,
+    matchedPipeline,
+    matchedStage,
+    allPipelines: pipelines.map((item) => ({
+      id: getEntityId(item),
+      name: getEntityName(item),
+    })),
+    allStages: stages,
+    envLineToSet: `LEADCONNECTOR_PIPELINE_STAGE_ID=${matchedStage.id}`,
+    error: "",
   };
 }
 
