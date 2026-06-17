@@ -169,7 +169,7 @@ export async function getAvailableConsultationSlots() {
     .sort({ start: 1 })
     .lean();
 
-  return serialize(slots.length ? slots : getFallbackAvailability());
+  return serialize(slots);
 }
 
 export async function getAllConsultationSlots() {
@@ -181,7 +181,7 @@ export async function getAllConsultationSlots() {
 
   await connectToDatabase();
   const slots = await ConsultationAvailabilityModel.find().sort({ start: 1 }).lean();
-  return serialize(slots.length ? slots : getFallbackAvailability());
+  return serialize(slots);
 }
 
 export async function getInquiries() {

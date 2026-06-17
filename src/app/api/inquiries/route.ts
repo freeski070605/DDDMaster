@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isValidObjectId } from "mongoose";
 
 import { sendInquiryEmails } from "@/lib/email";
 import { isDatabaseConfigured } from "@/lib/env";
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
 
     let consultationSlotId = null;
 
-    if (payload.consultationSlotId) {
+    if (payload.consultationSlotId && isValidObjectId(payload.consultationSlotId)) {
       const slot = await ConsultationAvailabilityModel.findOneAndUpdate(
         {
           _id: payload.consultationSlotId,
