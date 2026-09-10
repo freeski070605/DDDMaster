@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const formId = "FEWk0e24K6bxe3nchsxy";
 const formName = "Event Inquiry Form";
-const formSrc = `https://www.divinedecor.design/widget/form/${formId}`;
+const formSrc = `https://api.leadconnectorhq.com/widget/form/${formId}`;
 
 export function InquiryForm({
   services: _services,
@@ -37,7 +37,7 @@ export function InquiryForm({
         </div>
         <Script
           id="posh-academy-form-embed"
-          src="https://www.divinedecor.design/js/form_embed.js"
+          src="https://link.msgsndr.com/js/form_embed.js"
           strategy="afterInteractive"
         />
       </CardContent>
