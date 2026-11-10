@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 
-import { ExternalTrackingScript } from "@/components/site/external-tracking-script";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
 import { StickyCta } from "@/components/site/sticky-cta";
@@ -68,7 +67,6 @@ export default async function RootLayout({
           />
           <StickyCta />
         </div>
-        <ExternalTrackingScript />
       </body>
     </html>
   );
