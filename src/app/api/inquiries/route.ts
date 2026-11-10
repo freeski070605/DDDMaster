@@ -167,15 +167,17 @@ export async function POST(request: Request) {
       return formRedirect(request, "/inquire?error=save");
     }
 
-    void sendInquiryEmails({
+    try {
+      await sendInquiryEmails({
       fullName,
       email: payload.email,
       eventType: payload.eventType,
       eventDate: new Date(payload.eventDate).toDateString(),
       venue: payload.venue,
-    }).catch((emailError) => {
-      console.error("Unable to send inquiry email.", emailError);
     });
+    } catch (emailError) {
+      console.error("Unable to send inquiry email.", emailError);
+    }
 
     if (jsonRequest) {
       return NextResponse.json({ success: true, id: inquiryId });
